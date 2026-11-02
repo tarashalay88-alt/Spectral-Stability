@@ -82,7 +82,7 @@ $$
 We consider the family
 
 $$
-\Sigma(t)=\operatorname{diag}\!\left(
+\Sigma(t)=\mathrm{diag}\!\left(
 6,4,3,2,
 \underbrace{1+t,\ldots,1+t}_{4},
 \underbrace{1-t,\ldots,1-t}_{4}
@@ -104,8 +104,8 @@ The primary comparison is $t=0$ versus $t=0.8$; intermediate values provide addi
 | Leading eigenvalues | Fixed: $6,4,3$ |
 | Fourth eigenvalue | Fixed: $2$ |
 | Boundary eigengap $\delta_3$ | Fixed: $1$ |
-| Total variance $\operatorname{tr}(\Sigma)$ | Fixed: $23$ |
-| Leading population subspace | Fixed: $\operatorname{span}(e_1,e_2,e_3)$ |
+| Total variance $\mathrm{tr}(\Sigma)$ | Fixed: $23$ |
+| Leading population subspace | Fixed: $\mathrm{span}(e_1,e_2,e_3)$ |
 | Trailing eigenvalue distribution | Varied with $t$ |
 | Sample size $n$ | Varied |
 
@@ -114,7 +114,7 @@ For every $t$ in the grid,
 $$
 \delta_3=\lambda_3-\lambda_4=3-2=1,
 \qquad
-\operatorname{tr}(\Sigma(t))=23.
+\mathrm{tr}(\Sigma(t))=23.
 $$
 
 ### 4.2. Sampling and covariance estimation
@@ -145,7 +145,7 @@ $$
 
 The saved replication-level data contain one loss per sample size, spectral parameter, and replication index: **10,000 losses**, with no missing observations or duplicate keys. The output files record random seed `20261031`.
 
-The contrasts are computed from paired replication-level losses. The precise random-number coupling and covariance-estimation implementation should be confirmed in the experiment code.
+The contrasts use paired replication-level losses. The implementation in [`E2_experiment.py`](../E2_experiment.py) confirms that each replication reuses the same Gaussian draw matrix across all spectral settings, and estimates covariance from centered observations.
 
 ## 5. Theoretical Benchmarks
 
@@ -238,7 +238,7 @@ The paired standard error is calculated using
 $$
 D_m=L_3^{(m)}(0.8)-L_3^{(m)}(0),
 \qquad
-\widehat{\operatorname{SE}}(\widehat\Delta_R)=\frac{s_D}{\sqrt M},
+\widehat{\mathrm{SE}}(\widehat\Delta_R)=\frac{s_D}{\sqrt M},
 $$
 
 where $s_D$ is the sample standard deviation of the 500 paired differences.
@@ -254,7 +254,7 @@ The experiment also investigated the intermediate values $t=0.2,0.4,0.6$. The ta
 | 1000 | 0.006571 | 0.006788 | 0.007456 | 0.008713 | 0.010869 |
 | 2000 | 0.003456 | 0.003551 | 0.003868 | 0.004474 | 0.005525 |
 
-![E2 Monte Carlo mean normalized projector loss versus spectral redistribution parameter, for four sample sizes.](figures/e2_mean_loss_vs_t.png)
+![E2 Monte Carlo mean normalized projector loss versus spectral redistribution parameter, for four sample sizes.](figures/e2_mean_loss_vs_t.svg)
 
 *Figure 1. Mean normalized projector loss across spectral configurations; error bars show Monte Carlo uncertainty.*
 
@@ -271,11 +271,11 @@ This comparison directly evaluates the first-order risk prediction.
 | 1000 | 0.004299 | 0.004202 | +0.000096 |
 | 2000 | 0.002068 | 0.002100 | −0.000032 |
 
-![Observed paired risk contrasts relative to t=0 and theoretical first-order contrasts across spectral parameters and sample sizes.](figures/e2_contrast_vs_theory.png)
+![Observed paired risk contrasts relative to t=0 and theoretical first-order contrasts across spectral parameters and sample sizes.](figures/e2_contrast_vs_theory.svg)
 
 *Figure 2. Observed paired contrasts versus first-order theoretical contrasts.*
 
-![Difference between observed and theoretical first-order contrasts as a function of spectral redistribution.](figures/e2_prediction_error.png)
+![Difference between observed and theoretical first-order contrasts as a function of spectral redistribution.](figures/e2_prediction_error.svg)
 
 *Figure 3. Prediction error $\widehat\Delta_R-\Delta_B$ for the first-order contrast.*
 
@@ -318,4 +318,4 @@ The differences are consistent in direction with the first-order benchmark, and 
 
 ---
 
-**Supporting pilot data:** [replication-level losses](data/e2_pilot_replications.csv) · [mean-risk summary](data/e2_pilot_means.csv) · [paired-contrast summary](data/e2_pilot_contrasts.csv). Numerical results are from the pilot; code-level reproducibility details (sampling implementation and random-number coupling) should be verified against the experiment source before final publication.
+**Supporting pilot data:** [replication-level losses](../../results/tables/e2_pilot_replications.csv) · [mean-risk summary](../../results/tables/e2_pilot_means.csv) · [paired-contrast summary](../../results/tables/e2_pilot_contrasts.csv). Numerical results are from the pilot. The simulation implementation is in [`experiments/E2_experiment.py`](../E2_experiment.py); this report describes the pilot rather than a final confirmatory experiment.
