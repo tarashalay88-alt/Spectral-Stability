@@ -1,0 +1,41 @@
+test_general_benchmark_requires_cross_eigengap (stability_tests.TestBenchmarks.test_general_benchmark_requires_cross_eigengap) ... ok
+test_general_formula_directly (stability_tests.TestBenchmarks.test_general_formula_directly) ... ok
+test_spiked_and_general_benchmarks_are_equivalent (stability_tests.TestBenchmarks.test_spiked_and_general_benchmarks_are_equivalent) ... ok
+test_projector_loss_identities_and_basis_invariance (stability_tests.TestPrincipalSubspaces.test_projector_loss_identities_and_basis_invariance) ... ok
+test_top_eigenvectors_and_projector_properties (stability_tests.TestPrincipalSubspaces.test_top_eigenvectors_and_projector_properties) ... ok
+test_centering_and_n_minus_one_identity (stability_tests.TestSamplingAndSampleCovariance.test_centering_and_n_minus_one_identity) ... ok
+test_sampling_shape_and_explicit_generator_reproducibility (stability_tests.TestSamplingAndSampleCovariance.test_sampling_shape_and_explicit_generator_reproducibility) ... ok
+test_eigenstructure_and_dimensions (stability_tests.TestSpikedCovariance.test_eigenstructure_and_dimensions) ... ok
+test_general_dimensions_projectors_angles_and_invariances (test_e3_math.Projectors.test_general_dimensions_projectors_angles_and_invariances) ... ok
+test_known_angles_and_orthogonal_loss (test_e3_math.Projectors.test_known_angles_and_orthogonal_loss) ... ok
+test_direct_gaussian_and_wishart_moments_and_risk (test_e3_math.Sampling.test_direct_gaussian_and_wishart_moments_and_risk) ... Sampling validation n=50 delta=0.05 t=0.0: Gaussian risk=0.240052, Wishart=0.237034, difference/combined SE=1.186
+Sampling validation n=50 delta=0.05 t=0.8: Gaussian risk=0.294123, Wishart=0.289224, difference/combined SE=2.012
+Sampling validation n=500 delta=1.0 t=0.0: Gaussian risk=0.013652, Wishart=0.013957, difference/combined SE=1.652
+Sampling validation n=2000 delta=1.0 t=0.8: Gaussian risk=0.005562, Wishart=0.005446, difference/combined SE=1.809
+ok
+test_general_rotated_covariance_moments (test_e3_math.Sampling.test_general_rotated_covariance_moments) ... ok
+test_seed_streams_unique_and_reproducible (test_e3_math.Sampling.test_seed_streams_unique_and_reproducible) ... ok
+test_singular_sample_covariance_falls_back_to_gaussian (test_e3_math.Sampling.test_singular_sample_covariance_falls_back_to_gaussian) ... ok
+test_entire_frozen_grid (test_e3_math.SpectraAndBenchmarks.test_entire_frozen_grid) ... ok
+test_hand_computed_examples_and_n_minus_one (test_e3_math.SpectraAndBenchmarks.test_hand_computed_examples_and_n_minus_one) ... ok
+test_invalid_arguments (test_e3_math.SpectraAndBenchmarks.test_invalid_arguments) ... ok
+test_measurements_general_shapes (test_e3_math.SpectraAndBenchmarks.test_measurements_general_shapes) ... ok
+test_raw_extreme_no_floor_no_cap (test_e3_math.SpectraAndBenchmarks.test_raw_extreme_no_floor_no_cap) ... ok
+test_bootstrap_preserves_complete_records_and_recomputes_risk (test_e3_statistics.BootstrapAndTargets.test_bootstrap_preserves_complete_records_and_recomputes_risk) ... ok
+test_bootstrap_risk_sd_matches_mcse (test_e3_statistics.BootstrapAndTargets.test_bootstrap_risk_sd_matches_mcse) ... ok
+test_invalid_records_refused_not_dropped (test_e3_statistics.BootstrapAndTargets.test_invalid_records_refused_not_dropped) ... ok
+test_target_is_population_risk_not_realized_loss (test_e3_statistics.BootstrapAndTargets.test_target_is_population_risk_not_realized_loss) ... ok
+test_tied_caps_merged_and_never_split (test_e3_statistics.BootstrapAndTargets.test_tied_caps_merged_and_never_split) ... ok
+test_nonfinite_and_measurement_failures_are_retained (test_e3_statistics.FailureRecording.test_nonfinite_and_measurement_failures_are_retained) ... ok
+test_out_of_range_loss_flagged_without_clipping (test_e3_statistics.FailureRecording.test_out_of_range_loss_flagged_without_clipping) ... ok
+test_mcse_and_student_interval_hand_values (test_e3_statistics.Intervals.test_mcse_and_student_interval_hand_values) ... ok
+test_mean_interval_and_bootstrap_mean_empirical_coverage (test_e3_statistics.Intervals.test_mean_interval_and_bootstrap_mean_empirical_coverage) ... ok
+test_oracle_classification_checks_whole_interval (test_e3_statistics.Intervals.test_oracle_classification_checks_whole_interval) ... ok
+test_order_statistic_coverage_exact_and_ties (test_e3_statistics.Intervals.test_order_statistic_coverage_exact_and_ties) ... ok
+test_relative_frequency_joint_interval_zero_and_coverage (test_e3_statistics.Intervals.test_relative_frequency_joint_interval_zero_and_coverage) ... ok
+test_wilson_boundaries_and_known_values (test_e3_statistics.Intervals.test_wilson_boundaries_and_known_values) ... ok
+
+----------------------------------------------------------------------
+Ran 32 tests in 4.427s
+
+OK

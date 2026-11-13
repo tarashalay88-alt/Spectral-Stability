@@ -1,0 +1,2146 @@
+{
+  "analysis_artifact_hashes": {
+    "calibration.csv": "798a8c0be6973b7fdaf2ac7a4b0b12c17b28de4aaf74b37c17597d155abcb71c",
+    "contrasts.csv": "9679b7ba0b130832f2115bd451b2076f9a576336f847eab563050fda2bc259c8",
+    "figure_index.json": "31bab262bf5a921770481c8f07922192e9fa1e3a801ce56d93b49669715f9c8d",
+    "figures/oracle_absolute_error.png": "b0bf5372ce116dc84f2e66345d262b7062d57aa5d1bcf8acb8790bc670604f6b",
+    "figures/oracle_absolute_error.svg": "20d906bc85c1b54df505e40939a0ef221893c71791f41c851d3ca55b538a84e5",
+    "figures/oracle_relative_error.png": "f517837c12e00adfe56f303980e4b7d0ec9b797ef85d405182de6b44a3281e20",
+    "figures/oracle_relative_error.svg": "0a82176535670ac000132f68b4c3ee3017cd90101fba47ebb512f1ea3bc14fb5",
+    "figures/oracle_signed_error.png": "84dc57c0705249e1d0951a3f221a025d7027ca1c94fc765c37ee4a3f9aad2e43",
+    "figures/oracle_signed_error.svg": "348d48c6bea13effa2b908e3139256719cd326125ff163f2c794587160563bc2",
+    "figures/prediction_spread.png": "4f3570cdf33e7ff76a85c2363d35567772df9a724e5ec9c261e7f18ed8d69dad",
+    "figures/prediction_spread.svg": "bd8a9bc05d0c91c19545891d42047ae326cbd19d9d46650ec872602af4956712",
+    "figures/relative_median_absolute_error.png": "b891eacfeb126f639e879069817b23da1c864b4a2314818ccdd555d40bc2a9c2",
+    "figures/relative_median_absolute_error.svg": "9eb6a30bef526a6b5cc495cbbe02dd5bd5173c735c831c48559e1a513195e706",
+    "figures/relative_underprediction.png": "7e6884be8b32306b33ba8afa7680af722e7a58d8d59514366994767ba48a80f0",
+    "figures/relative_underprediction.svg": "87576d7032e8921ff220daf58f7089b0b07de886c810dfe12784adc17efa2e29",
+    "figures/serious_underprediction.png": "f3ce76ae6232ee2399bcb7558395bd7dbdae8ae4eedbcb6ea33579ed06c931d6",
+    "figures/serious_underprediction.svg": "d92cd38240b84c5867fd012026d29f1fcce033d76fb1b4ff566511e780cf2260",
+    "pilot_report.md": "6b9a2af7a900ef725cff33b8ddaf242245a5003dd04390b513dee1a43a78455a",
+    "ranking.csv": "b90adcb1729251ee45ca58e7ca0415312927e52bb9e35b40b44aa0850bf4ebd8",
+    "summary.csv": "ff7db5e507748baf7c7b6e503b0d3cac458a0a07a249c2328c0434b1df76bd0d"
+  },
+  "analysis_complete": true,
+  "conditions": [
+    {
+      "config_id": "c000",
+      "config_index": 0,
+      "delta": 0.05,
+      "n": 50,
+      "t": 0.0
+    },
+    {
+      "config_id": "c001",
+      "config_index": 1,
+      "delta": 0.05,
+      "n": 50,
+      "t": 0.8
+    },
+    {
+      "config_id": "c002",
+      "config_index": 2,
+      "delta": 0.1,
+      "n": 50,
+      "t": 0.0
+    },
+    {
+      "config_id": "c003",
+      "config_index": 3,
+      "delta": 0.1,
+      "n": 50,
+      "t": 0.8
+    },
+    {
+      "config_id": "c004",
+      "config_index": 4,
+      "delta": 0.2,
+      "n": 50,
+      "t": 0.0
+    },
+    {
+      "config_id": "c005",
+      "config_index": 5,
+      "delta": 0.2,
+      "n": 50,
+      "t": 0.8
+    },
+    {
+      "config_id": "c006",
+      "config_index": 6,
+      "delta": 0.35,
+      "n": 50,
+      "t": 0.0
+    },
+    {
+      "config_id": "c007",
+      "config_index": 7,
+      "delta": 0.35,
+      "n": 50,
+      "t": 0.8
+    },
+    {
+      "config_id": "c008",
+      "config_index": 8,
+      "delta": 0.5,
+      "n": 50,
+      "t": 0.0
+    },
+    {
+      "config_id": "c009",
+      "config_index": 9,
+      "delta": 0.5,
+      "n": 50,
+      "t": 0.8
+    },
+    {
+      "config_id": "c010",
+      "config_index": 10,
+      "delta": 0.75,
+      "n": 50,
+      "t": 0.0
+    },
+    {
+      "config_id": "c011",
+      "config_index": 11,
+      "delta": 0.75,
+      "n": 50,
+      "t": 0.8
+    },
+    {
+      "config_id": "c012",
+      "config_index": 12,
+      "delta": 1.0,
+      "n": 50,
+      "t": 0.0
+    },
+    {
+      "config_id": "c013",
+      "config_index": 13,
+      "delta": 1.0,
+      "n": 50,
+      "t": 0.8
+    },
+    {
+      "config_id": "c014",
+      "config_index": 14,
+      "delta": 0.05,
+      "n": 100,
+      "t": 0.0
+    },
+    {
+      "config_id": "c015",
+      "config_index": 15,
+      "delta": 0.05,
+      "n": 100,
+      "t": 0.8
+    },
+    {
+      "config_id": "c016",
+      "config_index": 16,
+      "delta": 0.1,
+      "n": 100,
+      "t": 0.0
+    },
+    {
+      "config_id": "c017",
+      "config_index": 17,
+      "delta": 0.1,
+      "n": 100,
+      "t": 0.8
+    },
+    {
+      "config_id": "c018",
+      "config_index": 18,
+      "delta": 0.2,
+      "n": 100,
+      "t": 0.0
+    },
+    {
+      "config_id": "c019",
+      "config_index": 19,
+      "delta": 0.2,
+      "n": 100,
+      "t": 0.8
+    },
+    {
+      "config_id": "c020",
+      "config_index": 20,
+      "delta": 0.35,
+      "n": 100,
+      "t": 0.0
+    },
+    {
+      "config_id": "c021",
+      "config_index": 21,
+      "delta": 0.35,
+      "n": 100,
+      "t": 0.8
+    },
+    {
+      "config_id": "c022",
+      "config_index": 22,
+      "delta": 0.5,
+      "n": 100,
+      "t": 0.0
+    },
+    {
+      "config_id": "c023",
+      "config_index": 23,
+      "delta": 0.5,
+      "n": 100,
+      "t": 0.8
+    },
+    {
+      "config_id": "c024",
+      "config_index": 24,
+      "delta": 0.75,
+      "n": 100,
+      "t": 0.0
+    },
+    {
+      "config_id": "c025",
+      "config_index": 25,
+      "delta": 0.75,
+      "n": 100,
+      "t": 0.8
+    },
+    {
+      "config_id": "c026",
+      "config_index": 26,
+      "delta": 1.0,
+      "n": 100,
+      "t": 0.0
+    },
+    {
+      "config_id": "c027",
+      "config_index": 27,
+      "delta": 1.0,
+      "n": 100,
+      "t": 0.8
+    },
+    {
+      "config_id": "c028",
+      "config_index": 28,
+      "delta": 0.05,
+      "n": 250,
+      "t": 0.0
+    },
+    {
+      "config_id": "c029",
+      "config_index": 29,
+      "delta": 0.05,
+      "n": 250,
+      "t": 0.8
+    },
+    {
+      "config_id": "c030",
+      "config_index": 30,
+      "delta": 0.1,
+      "n": 250,
+      "t": 0.0
+    },
+    {
+      "config_id": "c031",
+      "config_index": 31,
+      "delta": 0.1,
+      "n": 250,
+      "t": 0.8
+    },
+    {
+      "config_id": "c032",
+      "config_index": 32,
+      "delta": 0.2,
+      "n": 250,
+      "t": 0.0
+    },
+    {
+      "config_id": "c033",
+      "config_index": 33,
+      "delta": 0.2,
+      "n": 250,
+      "t": 0.8
+    },
+    {
+      "config_id": "c034",
+      "config_index": 34,
+      "delta": 0.35,
+      "n": 250,
+      "t": 0.0
+    },
+    {
+      "config_id": "c035",
+      "config_index": 35,
+      "delta": 0.35,
+      "n": 250,
+      "t": 0.8
+    },
+    {
+      "config_id": "c036",
+      "config_index": 36,
+      "delta": 0.5,
+      "n": 250,
+      "t": 0.0
+    },
+    {
+      "config_id": "c037",
+      "config_index": 37,
+      "delta": 0.5,
+      "n": 250,
+      "t": 0.8
+    },
+    {
+      "config_id": "c038",
+      "config_index": 38,
+      "delta": 0.75,
+      "n": 250,
+      "t": 0.0
+    },
+    {
+      "config_id": "c039",
+      "config_index": 39,
+      "delta": 0.75,
+      "n": 250,
+      "t": 0.8
+    },
+    {
+      "config_id": "c040",
+      "config_index": 40,
+      "delta": 1.0,
+      "n": 250,
+      "t": 0.0
+    },
+    {
+      "config_id": "c041",
+      "config_index": 41,
+      "delta": 1.0,
+      "n": 250,
+      "t": 0.8
+    },
+    {
+      "config_id": "c042",
+      "config_index": 42,
+      "delta": 0.05,
+      "n": 500,
+      "t": 0.0
+    },
+    {
+      "config_id": "c043",
+      "config_index": 43,
+      "delta": 0.05,
+      "n": 500,
+      "t": 0.8
+    },
+    {
+      "config_id": "c044",
+      "config_index": 44,
+      "delta": 0.1,
+      "n": 500,
+      "t": 0.0
+    },
+    {
+      "config_id": "c045",
+      "config_index": 45,
+      "delta": 0.1,
+      "n": 500,
+      "t": 0.8
+    },
+    {
+      "config_id": "c046",
+      "config_index": 46,
+      "delta": 0.2,
+      "n": 500,
+      "t": 0.0
+    },
+    {
+      "config_id": "c047",
+      "config_index": 47,
+      "delta": 0.2,
+      "n": 500,
+      "t": 0.8
+    },
+    {
+      "config_id": "c048",
+      "config_index": 48,
+      "delta": 0.35,
+      "n": 500,
+      "t": 0.0
+    },
+    {
+      "config_id": "c049",
+      "config_index": 49,
+      "delta": 0.35,
+      "n": 500,
+      "t": 0.8
+    },
+    {
+      "config_id": "c050",
+      "config_index": 50,
+      "delta": 0.5,
+      "n": 500,
+      "t": 0.0
+    },
+    {
+      "config_id": "c051",
+      "config_index": 51,
+      "delta": 0.5,
+      "n": 500,
+      "t": 0.8
+    },
+    {
+      "config_id": "c052",
+      "config_index": 52,
+      "delta": 0.75,
+      "n": 500,
+      "t": 0.0
+    },
+    {
+      "config_id": "c053",
+      "config_index": 53,
+      "delta": 0.75,
+      "n": 500,
+      "t": 0.8
+    },
+    {
+      "config_id": "c054",
+      "config_index": 54,
+      "delta": 1.0,
+      "n": 500,
+      "t": 0.0
+    },
+    {
+      "config_id": "c055",
+      "config_index": 55,
+      "delta": 1.0,
+      "n": 500,
+      "t": 0.8
+    },
+    {
+      "config_id": "c056",
+      "config_index": 56,
+      "delta": 0.05,
+      "n": 1000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c057",
+      "config_index": 57,
+      "delta": 0.05,
+      "n": 1000,
+      "t": 0.8
+    },
+    {
+      "config_id": "c058",
+      "config_index": 58,
+      "delta": 0.1,
+      "n": 1000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c059",
+      "config_index": 59,
+      "delta": 0.1,
+      "n": 1000,
+      "t": 0.8
+    },
+    {
+      "config_id": "c060",
+      "config_index": 60,
+      "delta": 0.2,
+      "n": 1000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c061",
+      "config_index": 61,
+      "delta": 0.2,
+      "n": 1000,
+      "t": 0.8
+    },
+    {
+      "config_id": "c062",
+      "config_index": 62,
+      "delta": 0.35,
+      "n": 1000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c063",
+      "config_index": 63,
+      "delta": 0.35,
+      "n": 1000,
+      "t": 0.8
+    },
+    {
+      "config_id": "c064",
+      "config_index": 64,
+      "delta": 0.5,
+      "n": 1000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c065",
+      "config_index": 65,
+      "delta": 0.5,
+      "n": 1000,
+      "t": 0.8
+    },
+    {
+      "config_id": "c066",
+      "config_index": 66,
+      "delta": 0.75,
+      "n": 1000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c067",
+      "config_index": 67,
+      "delta": 0.75,
+      "n": 1000,
+      "t": 0.8
+    },
+    {
+      "config_id": "c068",
+      "config_index": 68,
+      "delta": 1.0,
+      "n": 1000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c069",
+      "config_index": 69,
+      "delta": 1.0,
+      "n": 1000,
+      "t": 0.8
+    },
+    {
+      "config_id": "c070",
+      "config_index": 70,
+      "delta": 0.05,
+      "n": 2000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c071",
+      "config_index": 71,
+      "delta": 0.05,
+      "n": 2000,
+      "t": 0.8
+    },
+    {
+      "config_id": "c072",
+      "config_index": 72,
+      "delta": 0.1,
+      "n": 2000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c073",
+      "config_index": 73,
+      "delta": 0.1,
+      "n": 2000,
+      "t": 0.8
+    },
+    {
+      "config_id": "c074",
+      "config_index": 74,
+      "delta": 0.2,
+      "n": 2000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c075",
+      "config_index": 75,
+      "delta": 0.2,
+      "n": 2000,
+      "t": 0.8
+    },
+    {
+      "config_id": "c076",
+      "config_index": 76,
+      "delta": 0.35,
+      "n": 2000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c077",
+      "config_index": 77,
+      "delta": 0.35,
+      "n": 2000,
+      "t": 0.8
+    },
+    {
+      "config_id": "c078",
+      "config_index": 78,
+      "delta": 0.5,
+      "n": 2000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c079",
+      "config_index": 79,
+      "delta": 0.5,
+      "n": 2000,
+      "t": 0.8
+    },
+    {
+      "config_id": "c080",
+      "config_index": 80,
+      "delta": 0.75,
+      "n": 2000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c081",
+      "config_index": 81,
+      "delta": 0.75,
+      "n": 2000,
+      "t": 0.8
+    },
+    {
+      "config_id": "c082",
+      "config_index": 82,
+      "delta": 1.0,
+      "n": 2000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c083",
+      "config_index": 83,
+      "delta": 1.0,
+      "n": 2000,
+      "t": 0.8
+    }
+  ],
+  "config": {
+    "bootstrap_repetitions": 2000,
+    "d": 12,
+    "delta_values": [
+      0.05,
+      0.1,
+      0.2,
+      0.35,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "k": 3,
+    "n_values": [
+      50,
+      100,
+      250,
+      500,
+      1000,
+      2000
+    ],
+    "pilot_replications": 1000,
+    "root_seed": 2026111303,
+    "sampling": "wishart",
+    "seed_namespaces": {
+      "confirmation_reserved": 2,
+      "pilot": 1,
+      "smoke": 0
+    },
+    "smoke_replications": 40,
+    "t_values": [
+      0.0,
+      0.8
+    ]
+  },
+  "environment": {
+    "cpu_count": 3,
+    "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "machine": "x86_64",
+    "numpy_blas": "{'Compilers': {'c': {'name': 'gcc', 'linker': 'ld.bfd', 'version': '14.2.1', 'commands': 'cc'}, 'cython': {'name': 'cython', 'linker': 'cython', 'version': '3.2.1', 'commands': 'cython'}, 'c++': {'name': 'gcc', 'linker': 'ld.bfd', 'version': '14.2.1', 'commands': 'c++'}}, 'Machine Information': {'host': {'cpu': 'x86_64', 'family': 'x86_64', 'endian': 'little', 'system': 'linux'}, 'build': {'cpu': 'x86_64', 'family': 'x86_64', 'endian': 'little', 'system': 'linux'}}, 'Build Dependencies': {'blas': {'name': 'scipy-openblas', 'found': True, 'version': '0.3.30', 'detection method': 'pkgconfig', 'include directory': '/opt/_internal/cpython-3.12.12/lib/python3.12/site-packages/scipy_openblas64/include', 'lib directory': '/opt/_internal/cpython-3.12.12/lib/python3.12/site-packages/scipy_openblas64/lib', 'openblas configuration': 'OpenBLAS 0.3.30  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=64', 'pc file directory': '/project/.openblas'}, 'lapack': {'name': 'scipy-openblas', 'found': True, 'version': '0.3.30', 'detection method': 'pkgconfig', 'include directory': '/opt/_internal/cpython-3.12.12/lib/python3.12/site-packages/scipy_openblas64/include', 'lib directory': '/opt/_internal/cpython-3.12.12/lib/python3.12/site-packages/scipy_openblas64/lib', 'openblas configuration': 'OpenBLAS 0.3.30  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=64', 'pc file directory': '/project/.openblas'}}, 'Python Information': {'path': '/tmp/build-env-aw1mwcap/bin/python', 'version': '3.12'}, 'SIMD Extensions': {'baseline': ['SSE', 'SSE2', 'SSE3'], 'found': ['SSSE3', 'SSE41', 'POPCNT', 'SSE42', 'AVX', 'F16C', 'FMA3', 'AVX2', 'AVX512F', 'AVX512CD', 'AVX512_SKX', 'AVX512_CLX', 'AVX512_CNL', 'AVX512_ICL'], 'not found': ['AVX512_KNL', 'AVX512_KNM', 'AVX512_SPR']}}",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "thread_settings": {
+      "MKL_NUM_THREADS": null,
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  },
+  "git_base_commit": "afa3dcbdb54909d82193c4a9d6f78d785d5b62db",
+  "git_status_porcelain": "?? .gitignore\n?? experiments/e3/README.md\n?? experiments/e3/analysis.py\n?? experiments/e3/config.yaml\n?? experiments/e3/design.py\n?? experiments/e3/figures.py\n?? experiments/e3/report.py\n?? experiments/e3/run.py\n?? experiments/e3/simulation.py\n?? requirements-e3.txt\n?? results/e3/\n?? src/spectral_stability/__init__.py\n?? src/spectral_stability/e3_math.py\n?? src/spectral_stability/e3_statistics.py\n?? tests/__init__.py\n?? tests/test_e3_math.py\n?? tests/test_e3_statistics.py\n",
+  "numerical_failures": 0,
+  "protocol_sha256": "9f20696518f7263b77dbf72eeb3b431548f06d31b74d293baa1a8246f35d4edb",
+  "replications_per_configuration": 1000,
+  "replications_sha256": "e54bcf3a5b9aad5541d844206cfda5af9240fa8eba0d412ff3de55805f67683e",
+  "run_id": "pilot-e5b01b6e772e-2026111303",
+  "seed_strategy": "PCG64(SeedSequence(root_seed, spawn_key=(stage,config_index,purpose))); independent configurations",
+  "simulation_seconds": 2.837661113000081,
+  "smoke_manifest_sha256": "dc6f0850c9bf9d8436a0cd5bc39eeef640c61103c3d4000a4bf67ec3f8139a9e",
+  "smoke_passed": false,
+  "smoke_path": "results/e3/smoke/run_manifest.json",
+  "source_fingerprint": "e5b01b6e772e363418487848636f9861b78bd25724304b911e7164c67c26d1c9",
+  "source_hashes": {
+    "PCA_stability.py": "e68c28a3dda60bef50c61e5218b8aeb70226748ad01fb44899d63cf2d3c50c06",
+    "experiments/e3/E3.md": "9f20696518f7263b77dbf72eeb3b431548f06d31b74d293baa1a8246f35d4edb",
+    "experiments/e3/README.md": "b62eafef4a92fa44a3c40693b534d07c0c18a35f305db2690106639e21d5f046",
+    "experiments/e3/analysis.py": "2b39deb1a71d9042aa26657c3f34a85484977aac2fadd56f0bafeab70a78b7db",
+    "experiments/e3/config.yaml": "5c9c6ba058bf35452637d7bb3d139b810f49365a1e5e013a93fdbeb3f98f2fae",
+    "experiments/e3/design.py": "f7ebf17de2a278ce627b877e0c889437ebcd89d0402b3775f2483ca6ff6c8d11",
+    "experiments/e3/figures.py": "e3038ff1b822c9d228e5b249088138f052ff4847ee4fbab0c72596613a9b77b5",
+    "experiments/e3/report.py": "4e8b0ef22dbcd5f5e7efa2d34fcbe9293649217c45cfaf390959fb073f9bf16a",
+    "experiments/e3/run.py": "b2e16b723460026361ee8640c9defd450cff27a3a5488fe32de6a68e5152e670",
+    "experiments/e3/simulation.py": "20bce8ce5b0b887f67e52d75f50caf53f6706bf716b414f19e8147caabff2649",
+    "requirements-e3.txt": "12592e1fc18a7caa60761008b1f318a9068b4884b8a04868ddddfccbc22d2885",
+    "src/spectral_stability/__init__.py": "50f2b7b89784965ec1bd2be9c21978eabbf6b01e907a03c4c070844708875e4b",
+    "src/spectral_stability/e3_math.py": "47d307b7317147aa8b1c1226f806d648d1342ecf052836317f4f64d47f63418c",
+    "src/spectral_stability/e3_statistics.py": "d4ddeaf44941391c7c484aa2aec95f3acff58bc4d7d8e26c4f27218bd3990d3d",
+    "stability_tests.py": "a467d3d580aedcdf64cba6ff4d38a0573da048c505df7b09a99d4fe0dc2d4c1f",
+    "tests/__init__.py": "0f06371610441d69ddcd3bd46b0ee9beabf438bddbe5584b3fd616dc851e71d5",
+    "tests/test_e3_math.py": "6eac54ce0b2afe1ff449fd4a42cc06c2770223c4d46451faedc51cce11bd68c7",
+    "tests/test_e3_statistics.py": "8e07acbe4403e5597912f29ec4deedebb2b84bda70010bf6e01668bd96755bb8"
+  },
+  "stage": "pilot",
+  "streams": {
+    "c000": {
+      "calibration_if_first_in_stratum": [
+        1,
+        0,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        0,
+        1
+      ],
+      "simulation": [
+        1,
+        0,
+        0
+      ]
+    },
+    "c001": {
+      "calibration_if_first_in_stratum": [
+        1,
+        1,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        1,
+        1
+      ],
+      "simulation": [
+        1,
+        1,
+        0
+      ]
+    },
+    "c002": {
+      "calibration_if_first_in_stratum": [
+        1,
+        2,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        2,
+        1
+      ],
+      "simulation": [
+        1,
+        2,
+        0
+      ]
+    },
+    "c003": {
+      "calibration_if_first_in_stratum": [
+        1,
+        3,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        3,
+        1
+      ],
+      "simulation": [
+        1,
+        3,
+        0
+      ]
+    },
+    "c004": {
+      "calibration_if_first_in_stratum": [
+        1,
+        4,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        4,
+        1
+      ],
+      "simulation": [
+        1,
+        4,
+        0
+      ]
+    },
+    "c005": {
+      "calibration_if_first_in_stratum": [
+        1,
+        5,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        5,
+        1
+      ],
+      "simulation": [
+        1,
+        5,
+        0
+      ]
+    },
+    "c006": {
+      "calibration_if_first_in_stratum": [
+        1,
+        6,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        6,
+        1
+      ],
+      "simulation": [
+        1,
+        6,
+        0
+      ]
+    },
+    "c007": {
+      "calibration_if_first_in_stratum": [
+        1,
+        7,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        7,
+        1
+      ],
+      "simulation": [
+        1,
+        7,
+        0
+      ]
+    },
+    "c008": {
+      "calibration_if_first_in_stratum": [
+        1,
+        8,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        8,
+        1
+      ],
+      "simulation": [
+        1,
+        8,
+        0
+      ]
+    },
+    "c009": {
+      "calibration_if_first_in_stratum": [
+        1,
+        9,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        9,
+        1
+      ],
+      "simulation": [
+        1,
+        9,
+        0
+      ]
+    },
+    "c010": {
+      "calibration_if_first_in_stratum": [
+        1,
+        10,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        10,
+        1
+      ],
+      "simulation": [
+        1,
+        10,
+        0
+      ]
+    },
+    "c011": {
+      "calibration_if_first_in_stratum": [
+        1,
+        11,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        11,
+        1
+      ],
+      "simulation": [
+        1,
+        11,
+        0
+      ]
+    },
+    "c012": {
+      "calibration_if_first_in_stratum": [
+        1,
+        12,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        12,
+        1
+      ],
+      "simulation": [
+        1,
+        12,
+        0
+      ]
+    },
+    "c013": {
+      "calibration_if_first_in_stratum": [
+        1,
+        13,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        13,
+        1
+      ],
+      "simulation": [
+        1,
+        13,
+        0
+      ]
+    },
+    "c014": {
+      "calibration_if_first_in_stratum": [
+        1,
+        14,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        14,
+        1
+      ],
+      "simulation": [
+        1,
+        14,
+        0
+      ]
+    },
+    "c015": {
+      "calibration_if_first_in_stratum": [
+        1,
+        15,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        15,
+        1
+      ],
+      "simulation": [
+        1,
+        15,
+        0
+      ]
+    },
+    "c016": {
+      "calibration_if_first_in_stratum": [
+        1,
+        16,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        16,
+        1
+      ],
+      "simulation": [
+        1,
+        16,
+        0
+      ]
+    },
+    "c017": {
+      "calibration_if_first_in_stratum": [
+        1,
+        17,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        17,
+        1
+      ],
+      "simulation": [
+        1,
+        17,
+        0
+      ]
+    },
+    "c018": {
+      "calibration_if_first_in_stratum": [
+        1,
+        18,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        18,
+        1
+      ],
+      "simulation": [
+        1,
+        18,
+        0
+      ]
+    },
+    "c019": {
+      "calibration_if_first_in_stratum": [
+        1,
+        19,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        19,
+        1
+      ],
+      "simulation": [
+        1,
+        19,
+        0
+      ]
+    },
+    "c020": {
+      "calibration_if_first_in_stratum": [
+        1,
+        20,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        20,
+        1
+      ],
+      "simulation": [
+        1,
+        20,
+        0
+      ]
+    },
+    "c021": {
+      "calibration_if_first_in_stratum": [
+        1,
+        21,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        21,
+        1
+      ],
+      "simulation": [
+        1,
+        21,
+        0
+      ]
+    },
+    "c022": {
+      "calibration_if_first_in_stratum": [
+        1,
+        22,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        22,
+        1
+      ],
+      "simulation": [
+        1,
+        22,
+        0
+      ]
+    },
+    "c023": {
+      "calibration_if_first_in_stratum": [
+        1,
+        23,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        23,
+        1
+      ],
+      "simulation": [
+        1,
+        23,
+        0
+      ]
+    },
+    "c024": {
+      "calibration_if_first_in_stratum": [
+        1,
+        24,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        24,
+        1
+      ],
+      "simulation": [
+        1,
+        24,
+        0
+      ]
+    },
+    "c025": {
+      "calibration_if_first_in_stratum": [
+        1,
+        25,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        25,
+        1
+      ],
+      "simulation": [
+        1,
+        25,
+        0
+      ]
+    },
+    "c026": {
+      "calibration_if_first_in_stratum": [
+        1,
+        26,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        26,
+        1
+      ],
+      "simulation": [
+        1,
+        26,
+        0
+      ]
+    },
+    "c027": {
+      "calibration_if_first_in_stratum": [
+        1,
+        27,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        27,
+        1
+      ],
+      "simulation": [
+        1,
+        27,
+        0
+      ]
+    },
+    "c028": {
+      "calibration_if_first_in_stratum": [
+        1,
+        28,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        28,
+        1
+      ],
+      "simulation": [
+        1,
+        28,
+        0
+      ]
+    },
+    "c029": {
+      "calibration_if_first_in_stratum": [
+        1,
+        29,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        29,
+        1
+      ],
+      "simulation": [
+        1,
+        29,
+        0
+      ]
+    },
+    "c030": {
+      "calibration_if_first_in_stratum": [
+        1,
+        30,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        30,
+        1
+      ],
+      "simulation": [
+        1,
+        30,
+        0
+      ]
+    },
+    "c031": {
+      "calibration_if_first_in_stratum": [
+        1,
+        31,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        31,
+        1
+      ],
+      "simulation": [
+        1,
+        31,
+        0
+      ]
+    },
+    "c032": {
+      "calibration_if_first_in_stratum": [
+        1,
+        32,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        32,
+        1
+      ],
+      "simulation": [
+        1,
+        32,
+        0
+      ]
+    },
+    "c033": {
+      "calibration_if_first_in_stratum": [
+        1,
+        33,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        33,
+        1
+      ],
+      "simulation": [
+        1,
+        33,
+        0
+      ]
+    },
+    "c034": {
+      "calibration_if_first_in_stratum": [
+        1,
+        34,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        34,
+        1
+      ],
+      "simulation": [
+        1,
+        34,
+        0
+      ]
+    },
+    "c035": {
+      "calibration_if_first_in_stratum": [
+        1,
+        35,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        35,
+        1
+      ],
+      "simulation": [
+        1,
+        35,
+        0
+      ]
+    },
+    "c036": {
+      "calibration_if_first_in_stratum": [
+        1,
+        36,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        36,
+        1
+      ],
+      "simulation": [
+        1,
+        36,
+        0
+      ]
+    },
+    "c037": {
+      "calibration_if_first_in_stratum": [
+        1,
+        37,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        37,
+        1
+      ],
+      "simulation": [
+        1,
+        37,
+        0
+      ]
+    },
+    "c038": {
+      "calibration_if_first_in_stratum": [
+        1,
+        38,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        38,
+        1
+      ],
+      "simulation": [
+        1,
+        38,
+        0
+      ]
+    },
+    "c039": {
+      "calibration_if_first_in_stratum": [
+        1,
+        39,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        39,
+        1
+      ],
+      "simulation": [
+        1,
+        39,
+        0
+      ]
+    },
+    "c040": {
+      "calibration_if_first_in_stratum": [
+        1,
+        40,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        40,
+        1
+      ],
+      "simulation": [
+        1,
+        40,
+        0
+      ]
+    },
+    "c041": {
+      "calibration_if_first_in_stratum": [
+        1,
+        41,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        41,
+        1
+      ],
+      "simulation": [
+        1,
+        41,
+        0
+      ]
+    },
+    "c042": {
+      "calibration_if_first_in_stratum": [
+        1,
+        42,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        42,
+        1
+      ],
+      "simulation": [
+        1,
+        42,
+        0
+      ]
+    },
+    "c043": {
+      "calibration_if_first_in_stratum": [
+        1,
+        43,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        43,
+        1
+      ],
+      "simulation": [
+        1,
+        43,
+        0
+      ]
+    },
+    "c044": {
+      "calibration_if_first_in_stratum": [
+        1,
+        44,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        44,
+        1
+      ],
+      "simulation": [
+        1,
+        44,
+        0
+      ]
+    },
+    "c045": {
+      "calibration_if_first_in_stratum": [
+        1,
+        45,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        45,
+        1
+      ],
+      "simulation": [
+        1,
+        45,
+        0
+      ]
+    },
+    "c046": {
+      "calibration_if_first_in_stratum": [
+        1,
+        46,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        46,
+        1
+      ],
+      "simulation": [
+        1,
+        46,
+        0
+      ]
+    },
+    "c047": {
+      "calibration_if_first_in_stratum": [
+        1,
+        47,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        47,
+        1
+      ],
+      "simulation": [
+        1,
+        47,
+        0
+      ]
+    },
+    "c048": {
+      "calibration_if_first_in_stratum": [
+        1,
+        48,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        48,
+        1
+      ],
+      "simulation": [
+        1,
+        48,
+        0
+      ]
+    },
+    "c049": {
+      "calibration_if_first_in_stratum": [
+        1,
+        49,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        49,
+        1
+      ],
+      "simulation": [
+        1,
+        49,
+        0
+      ]
+    },
+    "c050": {
+      "calibration_if_first_in_stratum": [
+        1,
+        50,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        50,
+        1
+      ],
+      "simulation": [
+        1,
+        50,
+        0
+      ]
+    },
+    "c051": {
+      "calibration_if_first_in_stratum": [
+        1,
+        51,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        51,
+        1
+      ],
+      "simulation": [
+        1,
+        51,
+        0
+      ]
+    },
+    "c052": {
+      "calibration_if_first_in_stratum": [
+        1,
+        52,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        52,
+        1
+      ],
+      "simulation": [
+        1,
+        52,
+        0
+      ]
+    },
+    "c053": {
+      "calibration_if_first_in_stratum": [
+        1,
+        53,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        53,
+        1
+      ],
+      "simulation": [
+        1,
+        53,
+        0
+      ]
+    },
+    "c054": {
+      "calibration_if_first_in_stratum": [
+        1,
+        54,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        54,
+        1
+      ],
+      "simulation": [
+        1,
+        54,
+        0
+      ]
+    },
+    "c055": {
+      "calibration_if_first_in_stratum": [
+        1,
+        55,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        55,
+        1
+      ],
+      "simulation": [
+        1,
+        55,
+        0
+      ]
+    },
+    "c056": {
+      "calibration_if_first_in_stratum": [
+        1,
+        56,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        56,
+        1
+      ],
+      "simulation": [
+        1,
+        56,
+        0
+      ]
+    },
+    "c057": {
+      "calibration_if_first_in_stratum": [
+        1,
+        57,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        57,
+        1
+      ],
+      "simulation": [
+        1,
+        57,
+        0
+      ]
+    },
+    "c058": {
+      "calibration_if_first_in_stratum": [
+        1,
+        58,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        58,
+        1
+      ],
+      "simulation": [
+        1,
+        58,
+        0
+      ]
+    },
+    "c059": {
+      "calibration_if_first_in_stratum": [
+        1,
+        59,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        59,
+        1
+      ],
+      "simulation": [
+        1,
+        59,
+        0
+      ]
+    },
+    "c060": {
+      "calibration_if_first_in_stratum": [
+        1,
+        60,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        60,
+        1
+      ],
+      "simulation": [
+        1,
+        60,
+        0
+      ]
+    },
+    "c061": {
+      "calibration_if_first_in_stratum": [
+        1,
+        61,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        61,
+        1
+      ],
+      "simulation": [
+        1,
+        61,
+        0
+      ]
+    },
+    "c062": {
+      "calibration_if_first_in_stratum": [
+        1,
+        62,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        62,
+        1
+      ],
+      "simulation": [
+        1,
+        62,
+        0
+      ]
+    },
+    "c063": {
+      "calibration_if_first_in_stratum": [
+        1,
+        63,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        63,
+        1
+      ],
+      "simulation": [
+        1,
+        63,
+        0
+      ]
+    },
+    "c064": {
+      "calibration_if_first_in_stratum": [
+        1,
+        64,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        64,
+        1
+      ],
+      "simulation": [
+        1,
+        64,
+        0
+      ]
+    },
+    "c065": {
+      "calibration_if_first_in_stratum": [
+        1,
+        65,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        65,
+        1
+      ],
+      "simulation": [
+        1,
+        65,
+        0
+      ]
+    },
+    "c066": {
+      "calibration_if_first_in_stratum": [
+        1,
+        66,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        66,
+        1
+      ],
+      "simulation": [
+        1,
+        66,
+        0
+      ]
+    },
+    "c067": {
+      "calibration_if_first_in_stratum": [
+        1,
+        67,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        67,
+        1
+      ],
+      "simulation": [
+        1,
+        67,
+        0
+      ]
+    },
+    "c068": {
+      "calibration_if_first_in_stratum": [
+        1,
+        68,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        68,
+        1
+      ],
+      "simulation": [
+        1,
+        68,
+        0
+      ]
+    },
+    "c069": {
+      "calibration_if_first_in_stratum": [
+        1,
+        69,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        69,
+        1
+      ],
+      "simulation": [
+        1,
+        69,
+        0
+      ]
+    },
+    "c070": {
+      "calibration_if_first_in_stratum": [
+        1,
+        70,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        70,
+        1
+      ],
+      "simulation": [
+        1,
+        70,
+        0
+      ]
+    },
+    "c071": {
+      "calibration_if_first_in_stratum": [
+        1,
+        71,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        71,
+        1
+      ],
+      "simulation": [
+        1,
+        71,
+        0
+      ]
+    },
+    "c072": {
+      "calibration_if_first_in_stratum": [
+        1,
+        72,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        72,
+        1
+      ],
+      "simulation": [
+        1,
+        72,
+        0
+      ]
+    },
+    "c073": {
+      "calibration_if_first_in_stratum": [
+        1,
+        73,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        73,
+        1
+      ],
+      "simulation": [
+        1,
+        73,
+        0
+      ]
+    },
+    "c074": {
+      "calibration_if_first_in_stratum": [
+        1,
+        74,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        74,
+        1
+      ],
+      "simulation": [
+        1,
+        74,
+        0
+      ]
+    },
+    "c075": {
+      "calibration_if_first_in_stratum": [
+        1,
+        75,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        75,
+        1
+      ],
+      "simulation": [
+        1,
+        75,
+        0
+      ]
+    },
+    "c076": {
+      "calibration_if_first_in_stratum": [
+        1,
+        76,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        76,
+        1
+      ],
+      "simulation": [
+        1,
+        76,
+        0
+      ]
+    },
+    "c077": {
+      "calibration_if_first_in_stratum": [
+        1,
+        77,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        77,
+        1
+      ],
+      "simulation": [
+        1,
+        77,
+        0
+      ]
+    },
+    "c078": {
+      "calibration_if_first_in_stratum": [
+        1,
+        78,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        78,
+        1
+      ],
+      "simulation": [
+        1,
+        78,
+        0
+      ]
+    },
+    "c079": {
+      "calibration_if_first_in_stratum": [
+        1,
+        79,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        79,
+        1
+      ],
+      "simulation": [
+        1,
+        79,
+        0
+      ]
+    },
+    "c080": {
+      "calibration_if_first_in_stratum": [
+        1,
+        80,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        80,
+        1
+      ],
+      "simulation": [
+        1,
+        80,
+        0
+      ]
+    },
+    "c081": {
+      "calibration_if_first_in_stratum": [
+        1,
+        81,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        81,
+        1
+      ],
+      "simulation": [
+        1,
+        81,
+        0
+      ]
+    },
+    "c082": {
+      "calibration_if_first_in_stratum": [
+        1,
+        82,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        82,
+        1
+      ],
+      "simulation": [
+        1,
+        82,
+        0
+      ]
+    },
+    "c083": {
+      "calibration_if_first_in_stratum": [
+        1,
+        83,
+        2
+      ],
+      "joint_bootstrap": [
+        1,
+        83,
+        1
+      ],
+      "simulation": [
+        1,
+        83,
+        0
+      ]
+    }
+  },
+  "total_replications": 84000,
+  "utc": "2026-11-13T14:06:47.278123+00:00",
+  "validation_json_sha256": "b343cb8d03cec9dedb8888d8a7cc162fedf02546e0d8d2f6f57ac4a164d1b167",
+  "validation_path": "results/e3/validation.json",
+  "verification": {
+    "configurations": 84,
+    "maximum_count": 1000,
+    "maximum_decomposition_residual": 5.551115123125783e-16,
+    "minimum_count": 1000,
+    "numerical_failures": 0,
+    "replications": 84000
+  },
+  "versions": {
+    "matplotlib": "3.10.8",
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "pyyaml": "6.0.3",
+    "scipy": "1.17.0"
+  }
+}

@@ -1,0 +1,1525 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..43e49a6
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,4 @@
++__pycache__/
++*.pyc
++.venv/
++.mplconfig/
+diff --git a/experiments/e3/README.md b/experiments/e3/README.md
+new file mode 100644
+index 0000000..67447ca
+--- /dev/null
++++ b/experiments/e3/README.md
+@@ -0,0 +1,124 @@
++# E3 pilot
++
++`E3.md` is the frozen protocol and is unchanged. This implementation runs the
++84-condition, 1,000-replication exploratory pilot only. There is no confirmation
++command. Python 3.12 was used; exact libraries are in `requirements-e3.txt`.
++
++From the repository root:
++
++```sh
++python -m venv .venv
++. .venv/bin/activate
++python -m pip install -r requirements-e3.txt
++OPENBLAS_NUM_THREADS=1 python experiments/e3/run.py validate
++OPENBLAS_NUM_THREADS=1 python experiments/e3/run.py smoke
++OPENBLAS_NUM_THREADS=1 python experiments/e3/run.py pilot
++OPENBLAS_NUM_THREADS=1 python experiments/e3/run.py analyze --output results/e3/pilot
++```
++
++`validate` runs all legacy mathematical tests and the E3 suite, records its log,
++source hashes and pass status in `results/e3/validation.*`. It includes projector
++properties, independent angle formulas, hand calculations, the full frozen
++spectrum, Gaussian/Wishart moments and risk comparisons, interval coverage,
++bootstrap dependence, capped ties, seed separation, and failure recording.
++`smoke` requires current successful validation and runs 40 replications for each
++of (n=50,delta=.05) and (n=2000,delta=1), for both backgrounds. It repeats the
++draws to verify exact seed reproduction, verifies the CSV round trip, and runs
++the full analysis. `pilot` requires successful current validation and default
++smoke artifacts. Changing source, tests, configuration or protocol makes those
++gates stale. Any recorded numerical failure blocks statistical analysis.
++
++Simulation commands refuse existing run manifests. To repeat without overwriting:
++
++```sh
++OPENBLAS_NUM_THREADS=1 python experiments/e3/run.py smoke --output results/e3/smoke-repeat
++OPENBLAS_NUM_THREADS=1 python experiments/e3/run.py pilot --output results/e3/pilot-repeat
++```
++
++A repeated pilot still checks the default smoke gate. `analyze` reads the saved
++CSV, checks its hash and the source hashes, then regenerates all analysis outputs
++without further simulation. Use `--output` to choose the saved run. Gate artifacts
++are in `results/e3/`; run-specific files are in its `smoke/` and `pilot/` directories.
++
++## Mathematical and statistical choices
++
++The reusable core is `src/spectral_stability/e3_math.py`; inference is in
++`e3_statistics.py`. Existing Gaussian observations, centered covariance and
++oracle benchmark utilities are reused. A single symmetric eigendecomposition
++provides the full descending sample spectrum and principal subspace. The
++Frobenius projector loss is retained without clipping, with range tolerance
++1e-12. The older clipped loss helper is an independent test reference only.
++The raw benchmark has neither gap floor nor cap; the explicitly separate capped
++column alone is bounded. Negative sample eigenvalues are diagnosed, never repaired.
++
++SciPy Bartlett Wishart sampling, divided by n-1, has exactly the centered Gaussian
++sample covariance law. Four contrasting configurations are compared against
++direct centered Gaussian sampling in validation, using 3,000 replications per
++method and 6-MCSE tolerances. Selected diagonal/off-diagonal first and second
++moments use their theoretical Wishart values. Rotated covariances and small
++singular samples are tested separately. Reusable sampling allows general d,n;
++df<d uses direct observations, and general d,k,n measurements are tested.
++
++PCG64 uses `SeedSequence(2026111303, spawn_key=(stage,config_index,purpose))`.
++Stages 0/1/2 are smoke/pilot/reserved confirmation; purposes 0/1/2 are simulation,
++joint bootstrap and secondary calibration. Configurations use the full grid
++order n, delta, t; smoke retains those grid IDs. No common random numbers are
++used across configurations. Secondary bootstrap contrasts and ranking combine
++independently resampled configurations. Every stream is deterministically
++recoverable from the configuration, stage and purpose; confirmation is unused.
++
++R uses s_L/sqrt(M) with a Student-t 95% interval. Oracle classification evaluates
++the tolerance over the entire risk CI, including piecewise-linear breakpoints.
++All raw quantiles have binomial order-statistic CIs (conservative with ties).
++These can have infinite endpoints in small smoke samples. Fixed-threshold
++frequencies have Wilson CIs. Other plug-in measures and labels use 2,000
++complete-record percentile bootstrap draws, recomputing risk in every draw.
++All intervals are pointwise, approximate where stated, and not adjusted for
++84 comparisons. No primary raw sample mean, raw MAE or raw RMSE is calculated.
++
++The primary relative-underprediction CI combines a 97.5% Student risk interval
++with a 97.5% uniform DKW band for the raw-prediction CDF (union bound). It accounts
++for the estimated risk threshold and is conservative without an independence
++assumption; risk coverage remains approximate. Complete-record percentile
++bootstrap limits are retained separately with `_bootstrap_low/high` suffixes.
++The joint-band interval avoids the degenerate [0,0] bootstrap interval possible
++with zero observed events. These choices were implemented before the pilot.
++
++Summary columns `median_absolute_error` and `relative_median_absolute_error`
++mean median(|raw-Rhat|) and its ratio to Rhat, respectively. They do not refer
++to the median absolute deviation about the sample median or to realized loss.
++`median_sample_eigenvalue_error` plus `oracle_signed_error` equals
++`median_signed_error`; the residual is checked. The two tolerance labels are
++kept separate, including uncertainty. Serious-underprediction frequencies are
++saved for all conditions, with risk-based eligibility recorded separately;
++the primary serious map displays only risk CIs entirely above 0.10.
++
++Secondary ranking uses seven medians/risks per fixed (n,t); bootstrap CIs reflect
++independent configuration streams. Calibration pools the seven gaps equally,
++merges tied quantile cutpoints, and never splits equal capped values. Its
++stratified matched bootstrap includes reference-risk uncertainty and is
++conditional on the observed bin boundaries. Within-sample Spearman associations
++of raw predictions with loss and gap are exploratory descriptive columns only.
++
++## Outputs and audit
++
++`replications.csv` stores every matched value, condition, replication ID, stream
++key and failure flag. `summary.csv` includes all primary point estimates and CIs;
++`contrasts.csv`, `ranking.csv`, `calibration.csv` contain secondary analyses.
++`figures/` holds PNG and SVG plots with run and manifest links. Missing smoke
++cells stay blank; plots do not extrapolate. `pilot_report.md` separates facts,
++observations, interpretation and remaining uncertainties. The same filename is
++used for the smoke report, with its stage clearly stated.
++
++`run_manifest.json` records the base Git commit, working-tree state, exact source
++hashes, protocol hash, source fingerprint, complete configuration and seed keys,
++Python/library/BLAS/environment details, replication counts, simulation runtime,
++numerical failures, validation/smoke hashes and analysis-artifact hashes.
++`figure_index.json` links figures to that manifest and source fingerprint.
++Results depend on the recorded NumPy/SciPy RNG implementation; reproducibility
++of numerical bits across different BLAS libraries/platforms is not asserted.
++
++Validation log and manifest are the authoritative gate records. The repository
++top-level `test.py` is a single-draw demonstration, not an automated test suite;
++it is intentionally not treated as a Monte Carlo validation. No changes were
++made to E1/E2 or to the frozen E3 protocol.
+diff --git a/experiments/e3/analysis.py b/experiments/e3/analysis.py
+new file mode 100644
+index 0000000..97b9c0e
+--- /dev/null
++++ b/experiments/e3/analysis.py
+@@ -0,0 +1,156 @@
++"""E3-A/E3-B and prespecified secondary outputs from retained matched rows."""
++import numpy as np
++import pandas as pd
++from scipy.stats import rankdata, spearmanr
++
++from PCA_stability import first_order_benchmark
++from spectral_stability.e3_statistics import (
++    METRICS, QUANTILES, bootstrap_metrics, calibration_edges, calibration_groups,
++    joint_metrics, mean_interval, oracle_label, percentile_interval,
++    quantile_interval, relative_frequency_interval, tolerance, wilson_interval)
++from .design import eigenvalues, seed_sequence
++from .simulation import VALUE_COLUMNS
++
++
++def summarize(records, config, stage):
++    if records.failure.any() or not np.isfinite(records[VALUE_COLUMNS]).all().all():
++        raise ValueError('Numerical failures retained; investigate before inference')
++    summaries, bootstrap = [], {}
++    for config_id, group in records.groupby('config_id', sort=True):
++        row = {key:group.iloc[0][key] for key in
++               ('config_id', 'config_index', 'n', 'delta', 't')}
++        row['M'] = len(group)
++        values = group[VALUE_COLUMNS].to_numpy()
++        raw, loss = values[:, 1], values[:, 0]
++        benchmark = first_order_benchmark(np.diag(eigenvalues(row['delta'], row['t'])),
++                                          int(row['n']), config['k'])
++        risk, se, lower, upper = mean_interval(loss)
++        row.update(risk=risk, risk_mcse=se, risk_low=lower, risk_high=upper,
++                   oracle=benchmark, oracle_signed_error=benchmark-risk,
++                   oracle_absolute_error=abs(benchmark-risk),
++                   oracle_relative_error=abs(benchmark-risk)/risk,
++                   tolerance=float(tolerance(risk)),
++                   oracle_label=oracle_label(benchmark, lower, upper))
++        estimates = joint_metrics(values, benchmark)
++        rng = np.random.default_rng(seed_sequence(config, stage, int(row['config_index']), 1))
++        draws = bootstrap_metrics(values, benchmark, rng, config['bootstrap_repetitions'])
++        bootstrap[config_id] = draws
++        lo, hi = percentile_interval(draws)
++        for i, name in enumerate(METRICS):
++            if name == 'risk':  # primary risk interval remains Student-t
++                continue
++            row[name], row[name+'_low'], row[name+'_high'] = estimates[i], lo[i], hi[i]
++        for endpoint in ('low','high'):
++            row['relative_underprediction_bootstrap_'+endpoint] = row['relative_underprediction_'+endpoint]
++        (row['relative_underprediction_low'], row['relative_underprediction_high']) = relative_frequency_interval(loss,raw)
++        row['plugin_label'] = ('within' if row['plugin_tolerance_margin_high'] <= 0 else
++                               'outside' if row['plugin_tolerance_margin_low'] > 0 else
++                               'uncertain')
++        for probability in QUANTILES:
++            name = f'raw_q{int(100*probability):02d}'
++            row[name] = np.quantile(raw, probability)
++            row[name+'_low'], row[name+'_high'] = quantile_interval(raw, probability)
++        for name, events in [('raw_exceeds_one', raw > 1), ('serious_underprediction', raw <= .05)]:
++            row[name] = events.mean()
++            row[name+'_count'] = int(events.sum())
++            row[name+'_low'], row[name+'_high'] = wilson_interval(events.sum(), len(raw))
++        row['serious_eligibility'] = ('established' if lower > .10 else
++                                      'below_threshold' if upper < .10 else 'uncertain')
++        row['maximum_raw'] = raw.max()
++        row['minimum_sample_gap'] = values[:, 3].min()
++        row['failure_count'] = int(group.failure.sum())
++        row['loss_raw_spearman'] = spearmanr(loss, raw).statistic
++        row['gap_raw_spearman'] = spearmanr(values[:, 3], raw).statistic
++        # Robust decomposition: median(raw-B)+(B-R)=median(raw)-R.
++        row['decomposition_residual'] = (row['median_sample_eigenvalue_error']
++                                       +row['oracle_signed_error']-row['median_signed_error'])
++        summaries.append(row)
++    return pd.DataFrame(summaries), bootstrap
++
++
++def contrasts_and_ranking(summary, bootstrap):
++    contrasts, ranking = [], []
++    for (n, delta), group in summary.groupby(['n', 'delta']):
++        if len(group) != 2:
++            continue
++        base, alternative = group.sort_values('t').to_dict('records')
++        row = dict(n=n, delta=delta, reference_t=0., alternative_t=.8,
++                   design='independent configuration streams')
++        for name in ('risk', 'median_prediction', 'median_absolute_error'):
++            i = METRICS.index(name)
++            row[name+'_difference'] = alternative[name]-base[name]
++            lo, hi = percentile_interval(bootstrap[alternative['config_id']][:, i]
++                                         -bootstrap[base['config_id']][:, i])
++            row[name+'_difference_low'], row[name+'_difference_high'] = lo, hi
++        row['oracle_difference'] = alternative['oracle']-base['oracle']
++        contrasts.append(row)
++    for (n, t), group in summary.groupby(['n', 't']):
++        if len(group) != 7:
++            continue
++        group = group.sort_values('delta')
++        draws = np.stack([bootstrap[x] for x in group.config_id])
++        a = rankdata(draws[:, :, METRICS.index('risk')], axis=0)
++        b = rankdata(draws[:, :, METRICS.index('median_prediction')], axis=0)
++        a, b = a-a.mean(axis=0), b-b.mean(axis=0)
++        correlations = np.sum(a*b, axis=0)/np.sqrt(np.sum(a*a, axis=0)*np.sum(b*b, axis=0))
++        lo, hi = percentile_interval(correlations)
++        ranking.append(dict(n=n, t=t, configurations=7,
++                            spearman=spearmanr(group.risk, group.median_prediction).statistic,
++                            ci_low=lo, ci_high=hi))
++    return pd.DataFrame(contrasts), pd.DataFrame(ranking)
++
++
++def calibration(records, summary, config, stage):
++    """Fixed observed quantile bins; stratified matched-row bootstrap.
++
++    Intervals are conditional on the displayed bin boundaries, and include
++    uncertainty in every reference R. No tie is split, even in resampling.
++    """
++    result = []
++    references = summary.set_index('config_id').risk
++    for (n, t), frame in records.groupby(['n', 't']):
++        if frame.config_id.nunique() != 7:
++            continue
++        edges = calibration_edges(frame.plugin_capped.to_numpy())
++        labels = calibration_groups(frame.plugin_capped.to_numpy(), edges)
++        groups = len(edges)-1
++        reference = frame.config_id.map(references).to_numpy()
++        observed = []
++        for label in range(groups):
++            mask = labels == label
++            observed.append(dict(n=n, t=t, group=label, groups_after_ties=groups,
++                                 lower_edge=edges[label], upper_edge=edges[label+1],
++                                 count=int(mask.sum()), mean_prediction=frame.plugin_capped[mask].mean(),
++                                 mean_reference_risk=reference[mask].mean(),
++                                 capped_ties=int((frame.plugin_capped[mask] == 1).sum())))
++        first_index = int(frame.config_index.min())
++        rng = np.random.default_rng(seed_sequence(config, stage, first_index, 2))
++        draws = []
++        strata = [g[VALUE_COLUMNS].to_numpy() for _,g in frame.groupby('config_id', sort=True)]
++        for start in range(0, config['bootstrap_repetitions'], 100):
++            size = min(100, config['bootstrap_repetitions']-start)
++            predictions, risks = [], []
++            for values in strata:
++                index = rng.integers(0, len(values), (size, len(values)))
++                predictions.append(values[index, 2])
++                risk = values[index, 0].mean(axis=1)
++                risks.append(np.broadcast_to(risk[:, None], index.shape))
++            predictions, risks = np.concatenate(predictions, axis=1), np.concatenate(risks, axis=1)
++            group_ids = calibration_groups(predictions, edges)
++            statistics = []
++            for label in range(groups):
++                mask = group_ids == label
++                counts = mask.sum(axis=1)
++                if np.any(counts == 0):
++                    raise ValueError('Empty calibration bootstrap group; investigate')
++                p = (predictions*mask).sum(axis=1)/counts
++                r = (risks*mask).sum(axis=1)/counts
++                statistics.append(np.stack([p,r,p-r], axis=1))
++            draws.append(np.stack(statistics, axis=1))
++        lo, hi = percentile_interval(np.concatenate(draws))
++        for label, row in enumerate(observed):
++            row['prediction_minus_reference'] = row['mean_prediction']-row['mean_reference_risk']
++            for i,name in enumerate(('mean_prediction','mean_reference_risk','prediction_minus_reference')):
++                row[name+'_low'], row[name+'_high'] = lo[label,i], hi[label,i]
++            result.append(row)
++    return pd.DataFrame(result)
+diff --git a/experiments/e3/config.yaml b/experiments/e3/config.yaml
+new file mode 100644
+index 0000000..de684de
+--- /dev/null
++++ b/experiments/e3/config.yaml
+@@ -0,0 +1,12 @@
++# Frozen primary pilot design from E3.md. No confirmation command is provided.
++d: 12
++k: 3
++n_values: [50, 100, 250, 500, 1000, 2000]
++delta_values: [0.05, 0.10, 0.20, 0.35, 0.50, 0.75, 1.00]
++t_values: [0.0, 0.8]
++pilot_replications: 1000
++smoke_replications: 40
++bootstrap_repetitions: 2000
++root_seed: 2026111303
++sampling: wishart
++seed_namespaces: {smoke: 0, pilot: 1, confirmation_reserved: 2}
+diff --git a/experiments/e3/design.py b/experiments/e3/design.py
+new file mode 100644
+index 0000000..10021a5
+--- /dev/null
++++ b/experiments/e3/design.py
+@@ -0,0 +1,56 @@
++"""Frozen E3 design and stable stream identities, independent across configs."""
++from pathlib import Path
++import hashlib
++import itertools
++import numpy as np
++import yaml
++
++ROOT = Path(__file__).resolve().parents[2]
++
++
++def read_config(path=None):
++    config = yaml.safe_load(Path(path or ROOT/'experiments/e3/config.yaml').read_text())
++    frozen = dict(d=12, k=3, n_values=[50,100,250,500,1000,2000],
++                  delta_values=[.05,.10,.20,.35,.50,.75,1.], t_values=[0.,.8],
++                  pilot_replications=1000)
++    for key, expected in frozen.items():
++        if config[key] != expected:
++            raise ValueError(f"{key} disagrees with frozen protocol")
++    if config['seed_namespaces'] != dict(smoke=0, pilot=1, confirmation_reserved=2):
++        raise ValueError("seed namespaces changed")
++    return config
++
++
++def configurations(config):
++    return [dict(config_id=f"c{i:03d}", config_index=i, n=n, delta=delta, t=t)
++            for i,(n,delta,t) in enumerate(itertools.product(
++                config['n_values'], config['delta_values'], config['t_values']))]
++
++
++def eigenvalues(delta, t):
++    if not 0 < delta <= 1 or t not in (0., .8):
++        raise ValueError("outside the E3 population family")
++    return np.array([6.,4.,2.5+delta/2,2.5-delta/2]+[1+t]*4+[1-t]*4)
++
++
++def seed_sequence(config, stage, index, purpose):
++    # Purpose 0=simulation, 1=joint bootstrap, 2=calibration; no shared draws.
++    return np.random.SeedSequence(config['root_seed'], spawn_key=(
++        config['seed_namespaces'][stage], index, purpose))
++
++
++def source_files():
++    files = [ROOT/'PCA_stability.py', ROOT/'stability_tests.py']
++    for base, pattern in [('src','*.py'), ('tests','*.py'), ('experiments/e3','*.py')]:
++        files.extend(sorted((ROOT/base).rglob(pattern)))
++    files += [ROOT/'experiments/e3/config.yaml', ROOT/'experiments/e3/E3.md',
++              ROOT/'experiments/e3/README.md', ROOT/'requirements-e3.txt']
++    return files
++
++
++def file_hash(path):
++    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
++
++
++def source_hashes():
++    return {str(p.relative_to(ROOT)):file_hash(p) for p in source_files()}
+diff --git a/experiments/e3/figures.py b/experiments/e3/figures.py
+new file mode 100644
+index 0000000..0713f88
+--- /dev/null
++++ b/experiments/e3/figures.py
+@@ -0,0 +1,79 @@
++"""Plots only simulated cells; metadata links every figure to its manifest."""
++import os
++from pathlib import Path
++os.environ.setdefault('MPLCONFIGDIR', '/tmp/e3-matplotlib')
++os.environ.setdefault('XDG_CACHE_HOME', '/tmp/e3-cache')
++import matplotlib
++matplotlib.use('Agg')
++import matplotlib.pyplot as plt
++from matplotlib.colors import LogNorm
++import numpy as np
++
++
++def make_figures(summary, output, run_id):
++    output = Path(output)
++    output.mkdir(parents=True, exist_ok=True)
++    ns, deltas = sorted(summary.n.unique()), sorted(summary.delta.unique())
++    footer = f'Exploratory E3 {run_id}; d=12, k=3. Seeds/code/software: ../run_manifest.json'
++    maps = [
++        ('oracle_signed_error', 'Oracle signed error B − R̂', False),
++        ('oracle_absolute_error', 'Oracle absolute error |B − R̂|', True),
++        ('oracle_relative_error', 'Oracle relative error |B − R̂| / R̂', True),
++        ('relative_median_absolute_error', 'Median raw plug-in absolute error / R̂', True),
++        ('serious_underprediction', 'Serious underprediction P(B̂ ≤ 0.05); risk CI above 0.10', False),
++        ('relative_underprediction', 'Relative underprediction P(B̂ < 0.5 R̂)', False),
++    ]
++    for metric, title, logarithmic in maps:
++        fig, axes = plt.subplots(1, 2, figsize=(11, 4), layout='constrained')
++        observed = summary[metric].to_numpy()
++        if logarithmic:
++            positives = observed[observed > 0]
++            norm = LogNorm(vmin=max(1e-6, positives.min()), vmax=max(positives.max(), positives.min()*1.01))
++        else:
++            norm = None
++        kwargs = dict(norm=norm) if logarithmic else dict(vmin=min(0., observed.min()), vmax=max(observed.max(), .001))
++        if metric == 'oracle_signed_error':
++            bound = max(abs(observed.min()), abs(observed.max()))
++            kwargs = dict(vmin=-bound, vmax=bound)
++        for ax, t in zip(axes, (0., .8)):
++            subset = summary[summary.t == t]
++            cells = np.full((len(deltas), len(ns)), np.nan)
++            for row in subset.to_dict('records'):
++                i,j = deltas.index(row['delta']), ns.index(row['n'])
++                if metric != 'serious_underprediction' or row['serious_eligibility'] == 'established':
++                    cells[i,j] = row[metric]
++                else:
++                    ax.text(j,i,'?' if row['serious_eligibility']=='uncertain' else '—',
++                            ha='center',va='center',fontsize=8)
++            im = ax.imshow(np.ma.masked_invalid(cells), origin='lower', aspect='auto',
++                           cmap='coolwarm' if metric == 'oracle_signed_error' else 'viridis', **kwargs)
++            ax.set(xticks=range(len(ns)), xticklabels=ns, yticks=range(len(deltas)),
++                   yticklabels=[f'{d:.2f}' for d in deltas], xlabel='Sample size n',
++                   ylabel='Population boundary eigengap δ', title=f'Background t={t:g}')
++        fig.colorbar(im, ax=axes, shrink=.85, label='Log color scale' if logarithmic else 'Value')
++        fig.suptitle(title+'\n'+footer, fontsize=10)
++        for suffix in ('png','svg'):
++            fig.savefig(output/f'{metric}.{suffix}', dpi=160)
++        plt.close(fig)
++    fig, axes = plt.subplots(len(ns), 2, figsize=(11, 2.6*len(ns)), squeeze=False,
++                             layout='constrained')
++    for i,n in enumerate(ns):
++        for j,t in enumerate((0.,.8)):
++            ax = axes[i,j]
++            subset = summary[(summary.n==n)&(summary.t==t)].sort_values('delta')
++            x = subset.delta.to_numpy()
++            ax.fill_between(x, subset.raw_q05, subset.raw_q95, alpha=.18, label='Raw 5–95%')
++            ax.fill_between(x, subset.raw_q25, subset.raw_q75, alpha=.35, label='Raw 25–75%')
++            ax.vlines(x, subset.raw_q05, subset.raw_q95, alpha=.35, linewidth=1)
++            ax.vlines(x, subset.raw_q25, subset.raw_q75, alpha=.5, linewidth=3)
++            ax.plot(x, subset.raw_q50, 'o-', label='Raw median')
++            ax.plot(x, subset.raw_q99, 'x:', label='Raw 99%')
++            ax.plot(x, subset.risk, 's--', color='black', label='Risk R̂')
++            ax.set(yscale='log', xlabel='Population boundary eigengap δ',
++                   ylabel='Raw B̂ or risk R̂', title=f'n={n}, t={t:g}')
++            ax.grid(alpha=.2)
++    axes[0,0].legend(fontsize=7, ncols=2)
++    fig.suptitle('Raw plug-in prediction spread (log y scale)\n'+footer, fontsize=10)
++    for suffix in ('png','svg'):
++        fig.savefig(output/f'prediction_spread.{suffix}', dpi=160)
++    plt.close(fig)
+diff --git a/experiments/e3/report.py b/experiments/e3/report.py
+new file mode 100644
+index 0000000..8bb3751
+--- /dev/null
++++ b/experiments/e3/report.py
+@@ -0,0 +1,166 @@
++"""Concise exploratory report, regenerated from data rather than hand edits."""
++from pathlib import Path
++
++
++def condition(row):
++    return f"n={row.n}, δ={row.delta:g}, t={row.t:g}"
++
++
++def make_report(summary, records, manifest, output):
++    oracle = summary.oracle_label.value_counts().to_dict()
++    plugin = summary.plugin_label.value_counts().to_dict()
++    mismatch = summary[(summary.oracle_label=='within') & (summary.plugin_label=='outside')]
++    eligible = summary[summary.serious_eligibility=='established']
++    peak = summary.loc[summary.maximum_raw.idxmax()]
++    worst = summary.loc[summary.oracle_relative_error.idxmax()]
++    best = summary.loc[summary.oracle_relative_error.idxmin()]
++    typical_best = summary.loc[summary.relative_median_absolute_error.idxmin()]
++    target = eligible.loc[eligible.serious_underprediction.idxmax()] if len(eligible) else None
++    reliable = summary[summary.oracle_label=='within']
++    reliability_rows = []
++    for (n,t), group in summary.groupby(['n','t']):
++        gaps = ', '.join(f'{x:g}' for x in group.loc[group.oracle_label=='within','delta']) or 'none'
++        reliability_rows.append(f'| {n} | {t:g} | {gaps} | '
++            f"{int((group.oracle_label=='uncertain').sum())} | "
++            f"{int((group.plugin_label=='within').sum())} / {len(group)} |")
++    widest = summary.loc[(summary.raw_q95/summary.raw_q05).idxmax()]
++    examples = [worst, best, typical_best, peak]
++    if len(mismatch):
++        examples.append(mismatch.iloc[0])
++    if target is not None:
++        examples.append(target)
++    seen, rows = set(), []
++    for row in examples:
++        if row.config_id in seen:
++            continue
++        seen.add(row.config_id)
++        rows.append(f"| {row.config_id}: {condition(row)} | {row.risk:.5f} "
++                    f"[{row.risk_low:.5f}, {row.risk_high:.5f}] | {row.oracle:.5f} | "
++                    f"{row.oracle_relative_error:.1%} | {row.relative_median_absolute_error:.1%} | "
++                    f"{row.oracle_label} / {row.plugin_label} |")
++    lines = [f"# E3 exploratory {manifest['stage']} report", '',
++             f"Run `{manifest['run_id']}`: {len(summary)} configurations, {len(records):,} replications; "
++             f"{summary.M.min()}–{summary.M.max()} per configuration. No confirmation was run.", '',
++             '## Mathematical facts and implementation', '',
++             'The target is population risk R=E[L], not the loss of one sample. '
++             'The Gaussian centered covariance has Wishart law with n−1 degrees of freedom. '
++             'The pilot uses that exact law after Gaussian/Wishart moment and risk validation. '
++             'Loss is the squared projector distance divided by 2k; the oracle and raw plug-in '
++             'use the frozen formula divided by k(n−1). Raw values have no cap or gap floor; '
++             'the separate capped estimate is min(1,max(0,B̂)). No eigenvalues are repaired. '
++             'The spectrum, trace 23, leading eigenvalue 6, and fixed top-3 population subspace '
++             'are tested across the full frozen grid. The old clipped loss helper is used only '
++             'as an independent validation reference; E3 retains the unclipped computed loss.', '',
++             'The protocol states that the raw plug-in has an infinite mathematical mean. '
++             'A finite empirical sample neither verifies nor contradicts this fact. '
++             'Medians, quantiles, and event frequencies are primary; capped MAE/RMSE use R̂.', '',
++             '## Pilot observations', '',
++             f"Oracle labels: {oracle}. Typical plug-in labels: {plugin}. "
++             f"There are {len(mismatch)} configurations with oracle within tolerance and plug-in "
++             'typically outside tolerance. Labels use max(0.002,0.20R) and include uncertainty.', '',
++             f"Oracle relative error ranges from {best.oracle_relative_error:.1%} ({condition(best)}) "
++             f"to {worst.oracle_relative_error:.1%} ({condition(worst)}). "
++             f"{int((summary.oracle>1).sum())} configurations have B>1. "
++             'These bounds on R are a mathematical breakdown diagnostic; the observed error '
++             'maps provide the configuration-specific comparisons.', '',
++             '| Configuration | R̂ [95% MC CI] | B | Oracle relative error | Median relative absolute plug-in error | Oracle / plug-in label |',
++             '|---|---:|---:|---:|---:|---|', *rows, '',
++             '| n | t | Gaps with oracle within tolerance | Oracle uncertain count | Plug-in typically within / total |',
++             '|---:|---:|---|---:|---:|', *reliability_rows, '',
++             f"The largest raw 95th/5th percentile ratio is "
++             f"{widest.raw_q95/widest.raw_q05:.2f} at {condition(widest)} "
++             f"(5th={widest.raw_q05:.5g}, 95th={widest.raw_q95:.5g}). "
++             'This measures within-condition prediction spread, separately from typical error.', '',
++             f"The largest retained raw prediction is {peak.maximum_raw:.6g} at {condition(peak)}; "
++             f"the raw 99th percentile there is {peak.raw_q99:.6g} "
++             f"[95% CI {peak.raw_q99_low:.6g}, {peak.raw_q99_high:.6g}]. "
++             f"Across all observations, {int((records.plugin_raw>1).sum()):,} raw values exceed 1. "
++             'Prediction-spread plots display all six frozen quantiles (including the median).', '']
++    if len(reliable):
++        unreliable_sample = reliable.loc[reliable.relative_underprediction.idxmax()]
++        lines += [f"Even among oracle-within-tolerance configurations, relative underprediction "
++                  f"reaches {unreliable_sample.relative_underprediction:.1%} "
++                  f"[95% CI {unreliable_sample.relative_underprediction_low:.1%}, "
++                  f"{unreliable_sample.relative_underprediction_high:.1%}] at "
++                  f"{condition(unreliable_sample)}. Its median relative absolute plug-in error is "
++                  f"{unreliable_sample.relative_median_absolute_error:.1%} "
++                  f"[95% CI {unreliable_sample.relative_median_absolute_error_low:.1%}, "
++                  f"{unreliable_sample.relative_median_absolute_error_high:.1%}].", '']
++    if target is not None:
++        lines += [f"Among {len(eligible)} configurations whose risk CI is entirely above 0.10, "
++                  f"the largest serious-underprediction frequency is {target.serious_underprediction:.1%} "
++                  f"[95% Wilson CI {target.serious_underprediction_low:.1%}, "
++                  f"{target.serious_underprediction_high:.1%}] at {condition(target)}. "
++                  f"Relative underprediction there is {target.relative_underprediction:.1%} "
++                  f"[conservative joint-band CI {target.relative_underprediction_low:.1%}, "
++                  f"{target.relative_underprediction_high:.1%}].", '']
++    lines += ['## Uncertainty and secondary analyses', '',
++              'All intervals are pointwise 95%; there is no multiplicity correction or claim '
++              'of a universal transition boundary. R̂ uses the sample SD/√M and a Student-t '
++              'interval. Raw quantiles use conservative binomial order-statistic intervals; '
++              'frequencies with fixed thresholds use Wilson intervals. An infinite quantile '
++              'CI endpoint in a small smoke sample means insufficient distribution-free '
++              'tail information, not a non-finite simulated observation. Joint percentile '
++              f"bootstrap intervals use {manifest['config']['bootstrap_repetitions']} resamples, "
++              'resample complete (L,B̂,B̂cap,gap) records, and recompute R̂ in every draw. '
++              'Plug-in labels use the bootstrap CI for median(|B̂−R̂|)−max(0.002,0.20R̂). '
++              'Oracle labels check the whole risk interval, including the tolerance breakpoint.', '',
++              'Relative-underprediction intervals use a conservative union of a 97.5% '
++              'Student risk interval and a 97.5% uniform DKW band for the raw-prediction CDF. '
++              'This accounts for the estimated threshold and remains nondegenerate when no '
++              'event is observed, without assuming independence of loss and prediction. '
++              'Coverage inherits the Student interval approximation; the CDF component is '
++              'distribution-free. Matched-bootstrap intervals are retained separately as '
++              '`relative_underprediction_bootstrap_low/high` for comparison.', '',
++              'Streams are independent across configurations, so matched (n,δ) background '
++              'contrasts resample the two configurations independently. `contrasts.csv` '
++              'reports risk, median-prediction, and median-absolute-error differences. '
++              '`ranking.csv` compares only seven gaps at fixed (n,t), with bootstrap intervals. '
++              '`calibration.csv` pools those seven gaps with equal simulated weights, merges '
++              'tied quantile edges, and uses a stratified complete-record bootstrap that '
++              'recomputes each reference risk. Its intervals are conditional on the observed '
++              'displayed bin boundaries. Secondary tables are omitted from smoke runs with '
++              'incomplete seven-gap strata. Within-sample loss/prediction and gap/prediction '
++              'Spearman associations in `summary.csv` are explicitly exploratory, without '
++              'confidence or causal claims.', '',
++              '## Exploratory interpretation and concerns before confirmation', '',
++              'Inspect fixed-(n,t) slices of the continuous maps: pooled results cannot isolate '
++              'a gap effect. Small typical error does not imply narrow prediction spread. '
++              'The robust decomposition columns separate median(B̂−B) from B−R̂; cancellation '
++              'between them is not evidence for oracle accuracy. No strict monotonicity or '
++              'new theorem is asserted. Ambiguous labels remain uncertain.', '',
++              f"Numerical failures: {int(records.failure.sum())}; non-finite replication records: "
++              f"{int(records.nonfinite.sum())}; loss-range violations beyond 1e−12: "
++              f"{int(records.loss_out_of_bounds.sum())}. Extreme finite raw observations are "
++              'preserved, not discarded. `summary.csv` includes minima of the observed gaps. '
++              'Zero failures do not remove heavy-tail risk.', '',
++              'Before confirmation, review Monte Carlo precision near the frozen labels, '
++              'the stability of upper-tail quantiles at M=1000, the approximate coverage of '
++              'percentile bootstrap intervals for nonsmooth median-error labels, and '
++              'calibration intervals conditional on estimated bin boundaries. Treat seven-point '
++              'rank correlations cautiously. Eligibility of serious underprediction is uncertain '
++              'when the risk CI crosses 0.10; frequencies are retained for all configurations '
++              'but the serious-underprediction map shows only established eligibility. '
++              'Review this analysis implementation and its software choices before freezing '
++              'confirmation analysis. No amendment to hypotheses, grid, definitions, or '
++              'thresholds is proposed or applied. Confirmation namespace 2 is reserved and unused.', '',
++              '## Reproduction and provenance', '',
++              f"Base repository commit: `{manifest['git_base_commit']}`. The implementation is "
++              'identified exactly by per-file SHA-256 hashes and a source fingerprint in '
++              '`run_manifest.json`, which also records the dirty Git state, all seed keys, '
++              'parameters, Python/library versions, environment, numerical counts, and '
++              'artifact hashes. `validation.json` and `smoke/run_manifest.json` are linked '
++              'by hash from the pilot manifest. `figure_index.json` links each figure to this run.', '',
++              'Run from the repository root (see `experiments/e3/README.md`):', '',
++              '```sh', 'python -m venv .venv', '. .venv/bin/activate',
++              'python -m pip install -r requirements-e3.txt',
++              'OPENBLAS_NUM_THREADS=1 python experiments/e3/run.py validate',
++              'OPENBLAS_NUM_THREADS=1 python experiments/e3/run.py smoke',
++              'OPENBLAS_NUM_THREADS=1 python experiments/e3/run.py pilot',
++              'OPENBLAS_NUM_THREADS=1 python experiments/e3/run.py analyze --output results/e3/pilot',
++              '```', '',
++              'Simulation commands refuse to overwrite existing run manifests; use a fresh '
++              '`--output` directory for a repeat. `analyze` regenerates tables, figures, and '
++              'this report from the retained replication CSV and its recorded configuration. '
++              'No confirmatory simulation entry point is implemented.', '']
++    Path(output).write_text('\n'.join(lines))
+diff --git a/experiments/e3/run.py b/experiments/e3/run.py
+new file mode 100644
+index 0000000..656c54e
+--- /dev/null
++++ b/experiments/e3/run.py
+@@ -0,0 +1,225 @@
++"""Validate -> smoke -> pilot. Confirmation is deliberately unavailable."""
++from __future__ import annotations
++
++import argparse
++from contextlib import redirect_stdout
++from datetime import datetime, timezone
++import hashlib
++import io
++import json
++import os
++from pathlib import Path
++import platform
++import subprocess
++import sys
++import time
++import unittest
++
++ROOT = Path(__file__).resolve().parents[2]
++sys.path[:0] = [str(ROOT), str(ROOT/'src')]
++os.environ.setdefault('MPLCONFIGDIR', '/tmp/e3-matplotlib')
++os.environ.setdefault('XDG_CACHE_HOME', '/tmp/e3-cache')
++
++import numpy as np
++import pandas as pd
++import scipy
++import matplotlib
++import yaml
++
++from experiments.e3.design import (configurations, file_hash, read_config,
++                                    seed_sequence, source_hashes)
++from experiments.e3.simulation import simulate_configuration
++
++
++def save_json(path, value):
++    Path(path).parent.mkdir(parents=True, exist_ok=True)
++    Path(path).write_text(json.dumps(value, indent=2, sort_keys=True, default=str)+'\n')
++
++
++def fingerprint(hashes):
++    return hashlib.sha256(json.dumps(hashes, sort_keys=True).encode()).hexdigest()
++
++
++def validate():
++    output = ROOT/'results/e3'
++    output.mkdir(parents=True, exist_ok=True)
++    suite = unittest.TestSuite()
++    suite.addTests(unittest.defaultTestLoader.loadTestsFromName('stability_tests'))
++    suite.addTests(unittest.defaultTestLoader.discover(str(ROOT/'tests'), pattern='test_*.py'))
++    stream = io.StringIO()
++    start = time.perf_counter()
++    with redirect_stdout(stream):
++        result = unittest.TextTestRunner(stream=stream, verbosity=2).run(suite)
++    log = stream.getvalue()
++    print(log, flush=True)
++    (output/'validation.log').write_text(log)
++    hashes = source_hashes()
++    save_json(output/'validation.json', dict(passed=result.wasSuccessful(),
++              tests_run=result.testsRun, failures=len(result.failures), errors=len(result.errors),
++              skipped=len(result.skipped), source_hashes=hashes, source_fingerprint=fingerprint(hashes),
++              utc=datetime.now(timezone.utc).isoformat(), seconds=time.perf_counter()-start,
++              log_sha256=file_hash(output/'validation.log')))
++    if not result.wasSuccessful() or result.skipped:
++        raise SystemExit('Validation failed or mandatory tests skipped; pilot blocked')
++
++
++def require_validation():
++    path = ROOT/'results/e3/validation.json'
++    if not path.exists():
++        raise RuntimeError('Run validate first')
++    gate = json.loads(path.read_text())
++    if not gate['passed'] or gate['skipped'] or gate['source_hashes'] != source_hashes():
++        raise RuntimeError('Validation missing, failed, skipped, or stale; run validate')
++    if file_hash(path.with_suffix('.log')) != gate['log_sha256']:
++        raise RuntimeError('Validation log changed')
++    return path
++
++
++def audit_records(records, conditions, replications, stage):
++    expected = {row['config_id'] for row in conditions}
++    if set(records.config_id) != expected or len(records) != len(conditions)*replications:
++        raise ValueError('configuration or replication counts do not match')
++    if records.duplicated(['config_id','replication']).any():
++        raise ValueError('duplicate replication identifiers')
++    for row in conditions:
++        group = records[records.config_id == row['config_id']]
++        if len(group) != replications or set(group.replication) != set(range(replications)):
++            raise ValueError('incomplete configuration')
++        for key,value in row.items():
++            if not (group[key] == value).all():
++                raise ValueError(f'inconsistent {key}')
++        if not (group.stage == stage).all():
++            raise ValueError('incorrect stage')
++    if records.failure.any():
++        raise ValueError('Numerical failures retained; full analysis blocked pending investigation')
++
++
++def analyze(output):
++    from experiments.e3.analysis import summarize, contrasts_and_ranking, calibration
++    from experiments.e3.figures import make_figures
++    from experiments.e3.report import make_report
++    output = Path(output)
++    manifest = json.loads((output/'run_manifest.json').read_text())
++    if manifest['source_hashes'] != source_hashes():
++        raise RuntimeError('Source differs from simulation; review changes before regenerating')
++    if file_hash(output/'replications.csv') != manifest['replications_sha256']:
++        raise RuntimeError('Replication artifact changed')
++    records = pd.read_csv(output/'replications.csv', float_precision='round_trip', keep_default_na=False)
++    audit_records(records, manifest['conditions'], manifest['replications_per_configuration'], manifest['stage'])
++    summary, draws = summarize(records, manifest['config'], manifest['stage'])
++    contrasts, ranking = contrasts_and_ranking(summary, draws)
++    calibrated = calibration(records, summary, manifest['config'], manifest['stage'])
++    for name,frame in [('summary',summary),('contrasts',contrasts),('ranking',ranking),('calibration',calibrated)]:
++        frame.to_csv(output/f'{name}.csv', index=False)
++    make_figures(summary, output/'figures', manifest['run_id'])
++    make_report(summary, records, manifest, output/'pilot_report.md')
++    figures = sorted((output/'figures').glob('*'))
++    save_json(output/'figure_index.json', dict(run_id=manifest['run_id'],
++              source_fingerprint=manifest['source_fingerprint'],
++              manifest='run_manifest.json', figures={p.name:file_hash(p) for p in figures}))
++    artifacts = [output/f'{name}.csv' for name in ('summary','contrasts','ranking','calibration')]
++    artifacts += figures+[output/'pilot_report.md', output/'figure_index.json']
++    manifest['analysis_artifact_hashes'] = {str(p.relative_to(output)):file_hash(p) for p in artifacts}
++    manifest['analysis_complete'] = True
++    manifest['verification'] = dict(configurations=len(summary), replications=len(records),
++             minimum_count=int(summary.M.min()), maximum_count=int(summary.M.max()),
++             numerical_failures=int(records.failure.sum()),
++             maximum_decomposition_residual=float(summary.decomposition_residual.abs().max()))
++    save_json(output/'run_manifest.json', manifest)
++    print(f'Analysis complete: {len(summary)} configurations, {len(records):,} matched records -> {output}', flush=True)
++
++
++def simulate(stage, output):
++    validation_path = require_validation()
++    config = read_config()
++    all_conditions = configurations(config)
++    conditions = all_conditions if stage == 'pilot' else [c for c in all_conditions
++        if (c['n'],c['delta']) in ((50,.05),(2000,1.))]
++    replications = config[stage+'_replications']
++    smoke_path = ROOT/'results/e3/smoke/run_manifest.json'
++    if stage == 'pilot':
++        if not smoke_path.exists():
++            raise RuntimeError('Run default smoke before pilot')
++        smoke = json.loads(smoke_path.read_text())
++        if (not smoke.get('smoke_passed') or smoke['source_hashes'] != source_hashes()
++                or not smoke.get('analysis_complete')):
++            raise RuntimeError('Smoke failed, incomplete, or stale')
++        for name,digest in smoke['analysis_artifact_hashes'].items():
++            if file_hash(smoke_path.parent/name) != digest:
++                raise RuntimeError('Smoke analysis artifact changed')
++        if file_hash(smoke_path.parent/'replications.csv') != smoke['replications_sha256']:
++            raise RuntimeError('Smoke replication artifact changed')
++    output = Path(output)
++    if (output/'run_manifest.json').exists():
++        raise FileExistsError(f'Existing run at {output}; use a fresh --output directory')
++    output.mkdir(parents=True, exist_ok=True)
++    start = time.perf_counter()
++    frames = []
++    reproducible = True
++    for condition in conditions:
++        frame = simulate_configuration(config, condition, stage, replications)
++        frames.append(frame)
++        if stage == 'smoke':
++            repeat = simulate_configuration(config, condition, stage, replications)
++            reproducible &= frame.equals(repeat)
++        print(f"{stage} {condition['config_id']}: n={condition['n']}, delta={condition['delta']}, "
++              f"t={condition['t']}, M={len(frame)}, failures={frame.failure.sum()}", flush=True)
++    records = pd.concat(frames, ignore_index=True)
++    records.to_csv(output/'replications.csv', index=False)
++    # Round-trip through the actual persisted artifact, preserving float precision.
++    reread = pd.read_csv(output/'replications.csv', float_precision='round_trip', keep_default_na=False)
++    pd.testing.assert_frame_equal(records, reread, check_dtype=False, check_exact=True)
++    hashes = source_hashes()
++    revision = subprocess.check_output(['git','rev-parse','HEAD'], cwd=ROOT, text=True).strip()
++    status = subprocess.check_output(['git','status','--porcelain'], cwd=ROOT, text=True)
++    run_id = f"{stage}-{fingerprint(hashes)[:12]}-{config['root_seed']}"
++    manifest = dict(stage=stage, run_id=run_id, config=config, conditions=conditions,
++        replications_per_configuration=replications, total_replications=len(records),
++        source_hashes=hashes, source_fingerprint=fingerprint(hashes),
++        git_base_commit=revision, git_status_porcelain=status,
++        protocol_sha256=file_hash(ROOT/'experiments/e3/E3.md'),
++        validation_json_sha256=file_hash(validation_path), validation_path='results/e3/validation.json',
++        smoke_manifest_sha256=file_hash(smoke_path) if stage=='pilot' else None,
++        smoke_path='results/e3/smoke/run_manifest.json' if stage=='pilot' else None,
++        replications_sha256=file_hash(output/'replications.csv'),
++        versions=dict(python=sys.version, numpy=np.__version__, scipy=scipy.__version__,
++                      pandas=pd.__version__, matplotlib=matplotlib.__version__, pyyaml=yaml.__version__),
++        environment=dict(platform=platform.platform(), machine=platform.machine(),
++                         cpu_count=os.cpu_count(), executable=sys.executable,
++                         thread_settings={k:os.environ.get(k) for k in
++                             ('OPENBLAS_NUM_THREADS','OMP_NUM_THREADS','MKL_NUM_THREADS')},
++                         numpy_blas=str(np.__config__.CONFIG)),
++        utc=datetime.now(timezone.utc).isoformat(), simulation_seconds=time.perf_counter()-start,
++        numerical_failures=int(records.failure.sum()),
++        seed_strategy='PCG64(SeedSequence(root_seed, spawn_key=(stage,config_index,purpose))); independent configurations',
++        streams={c['config_id']:{p:list(seed_sequence(config,stage,c['config_index'],j).spawn_key)
++                                for p,j in [('simulation',0),('joint_bootstrap',1),
++                                            ('calibration_if_first_in_stratum',2)]} for c in conditions},
++        analysis_complete=False, smoke_passed=False)
++    save_json(output/'run_manifest.json', manifest)
++    audit_records(reread, conditions, replications, stage)
++    if stage == 'smoke' and not reproducible:
++        raise RuntimeError('Smoke seed reproducibility failed')
++    analyze(output)
++    if stage == 'smoke':
++        manifest = json.loads((output/'run_manifest.json').read_text())
++        manifest['smoke_passed'] = True
++        manifest['smoke_checks'] = dict(repeated_seeds_identical=reproducible,
++              csv_round_trip_exact=True, full_pipeline_passed=True,
++              raw_predictions_above_one_retained=int((records.plugin_raw>1).sum()))
++        save_json(output/'run_manifest.json', manifest)
++
++
++if __name__ == '__main__':
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument('command', choices=['validate','smoke','pilot','analyze'])
++    parser.add_argument('--output', type=Path)
++    args = parser.parse_args()
++    if args.command == 'validate':
++        if args.output:
++            parser.error('validation uses results/e3/validation.json')
++        validate()
++    elif args.command == 'analyze':
++        analyze(args.output or ROOT/'results/e3/pilot')
++    else:
++        simulate(args.command, args.output or ROOT/'results/e3'/args.command)
+diff --git a/experiments/e3/simulation.py b/experiments/e3/simulation.py
+new file mode 100644
+index 0000000..1d40a24
+--- /dev/null
++++ b/experiments/e3/simulation.py
+@@ -0,0 +1,50 @@
++"""Replication records: errors stay visible and stop inferential analysis."""
++import numpy as np
++import pandas as pd
++
++from spectral_stability.e3_math import (LOSS_TOLERANCE, measurements,
++                                       sample_covariances)
++from .design import eigenvalues, seed_sequence
++
++VALUE_COLUMNS = ['loss', 'plugin_raw', 'plugin_capped', 'sample_gap']
++
++
++def simulate_configuration(config, condition, stage, replications):
++    n, k, d = condition['n'], config['k'], config['d']
++    sigma = np.diag(eigenvalues(condition['delta'], condition['t']))
++    population = np.eye(d)[:, :k]
++    sequence = seed_sequence(config, stage, condition['config_index'], 0)
++    rng = np.random.default_rng(sequence)
++    # Separate sampling failures from measurement failures; retain every row.
++    try:
++        covariances = sample_covariances(sigma, n, replications, rng, config['sampling'])
++    except (ValueError, np.linalg.LinAlgError, FloatingPointError) as error:
++        raise RuntimeError(f"sampling failed for {condition}: {error}") from error
++    try:
++        values = np.column_stack(measurements(covariances, population, n, k))
++        errors = ['']*replications
++    except (ValueError, np.linalg.LinAlgError, FloatingPointError):
++        # Diagnose independently; never drop a difficult observation.
++        values = np.full((replications, 4), np.nan)
++        errors = []
++        for index, covariance in enumerate(covariances):
++            try:
++                values[index] = measurements(covariance, population, n, k)
++                errors.append('')
++            except (ValueError, np.linalg.LinAlgError, FloatingPointError) as error:
++                errors.append(f'{type(error).__name__}: {error}')
++    frame = pd.DataFrame(values, columns=VALUE_COLUMNS)
++    frame['numerical_error'] = errors
++    frame['nonfinite'] = ~np.isfinite(values).all(axis=1)
++    frame['loss_out_of_bounds'] = ((values[:, 0] < -LOSS_TOLERANCE)
++                                    | (values[:, 0] > 1+LOSS_TOLERANCE))
++    frame['invalid_gap'] = values[:, 3] <= 0
++    frame['negative_prediction'] = values[:, 1] < 0
++    frame['failure'] = (frame.nonfinite | frame.loss_out_of_bounds | frame.invalid_gap
++                        | frame.negative_prediction | (frame.numerical_error != ''))
++    for key, value in condition.items():
++        frame[key] = value
++    frame['replication'] = np.arange(replications)
++    frame['stage'] = stage
++    frame['seed_spawn_key'] = '.'.join(map(str, sequence.spawn_key))
++    return frame
+diff --git a/requirements-e3.txt b/requirements-e3.txt
+new file mode 100644
+index 0000000..38daa05
+--- /dev/null
++++ b/requirements-e3.txt
+@@ -0,0 +1,5 @@
++numpy==2.3.5
++scipy==1.17.0
++pandas==2.2.3
++matplotlib==3.10.8
++PyYAML==6.0.3
+diff --git a/src/spectral_stability/__init__.py b/src/spectral_stability/__init__.py
+new file mode 100644
+index 0000000..be0aaae
+--- /dev/null
++++ b/src/spectral_stability/__init__.py
+@@ -0,0 +1 @@
++"""Reusable numerical tools for spectral-stability experiments."""
+diff --git a/src/spectral_stability/e3_math.py b/src/spectral_stability/e3_math.py
+new file mode 100644
+index 0000000..3382e7e
+--- /dev/null
++++ b/src/spectral_stability/e3_math.py
+@@ -0,0 +1,98 @@
++"""Gaussian covariance simulation and unmodified first-order risk estimates.
++
++The E3 spectrum belongs in the experiment; these routines allow general d,k,n.
++No eigengap floor, eigenvalue repair, or loss clipping is performed here.
++"""
++from __future__ import annotations
++
++import numpy as np
++from scipy.stats import wishart
++
++from PCA_stability import centered_sample_covariance, gaussian_observations
++
++LOSS_TOLERANCE = 1e-12
++
++
++def check_dimensions(d, k, n):
++    for name, value in (("d", d), ("k", k), ("n", n)):
++        if isinstance(value, (bool, np.bool_)) or not isinstance(value, (int, np.integer)):
++            raise TypeError(f"{name} must be an integer")
++    if not 1 <= k < d or n < 2:
++        raise ValueError("require 1 <= k < d and n >= 2")
++
++
++def spectrum_benchmark(eigenvalues, n, k):
++    """Formula for descending nonnegative eigenvalues, including singular gaps.
++
++    A zero gap returns the actual IEEE inf/nan, to be recorded by the caller.
++    A negative eigenvalue is an error, including a negative rounding excursion;
++    it is never silently replaced by zero. Batch dimensions are supported.
++    """
++    lam = np.asarray(eigenvalues, dtype=float)
++    if lam.ndim < 1:
++        raise ValueError("eigenvalues must have a spectral axis")
++    check_dimensions(lam.shape[-1], k, n)
++    if not np.isfinite(lam).all() or (lam < 0).any():
++        raise ValueError("eigenvalues must be finite and nonnegative")
++    if (np.diff(lam, axis=-1) > 0).any():
++        raise ValueError("eigenvalues must be descending")
++    leading, trailing = lam[..., :k, None], lam[..., None, k:]
++    with np.errstate(divide="ignore", invalid="ignore", over="ignore"):
++        return np.sum(leading * trailing / (leading - trailing)**2,
++                      axis=(-2, -1)) / (k * (n - 1))
++
++
++def capped_benchmark(raw):
++    """The explicitly separate bounded estimator. NaNs remain NaNs."""
++    return np.minimum(1., np.maximum(0., raw))
++
++
++def projector_loss(estimated, population):
++    """Unclipped Frobenius loss for orthonormal (d,k) bases, including batches."""
++    estimated, population = np.asarray(estimated), np.asarray(population)
++    if estimated.shape[-2:] != population.shape[-2:]:
++        raise ValueError("bases must have matching (d,k) shapes")
++    d, k = estimated.shape[-2:]
++    check_dimensions(d, k, 2)
++    for basis in (estimated, population):
++        if not np.isfinite(basis).all() or not np.allclose(
++                np.swapaxes(basis, -1, -2) @ basis, np.eye(k), atol=1e-12, rtol=1e-12):
++            raise ValueError("basis must be finite and orthonormal")
++    difference = (estimated @ np.swapaxes(estimated, -1, -2)
++                  - population @ np.swapaxes(population, -1, -2))
++    return np.sum(difference**2, axis=(-2, -1)) / (2*k)
++
++
++def sample_covariances(sigma, n, m, rng, method="wishart"):
++    """Exact law of the centered covariance with df=n-1.
++
++    Bartlett Wishart sampling is used when df>=d. For df<d, fall back to
++    direct centered observations (a valid singular sample covariance).
++    """
++    sigma = np.asarray(sigma, dtype=float)
++    if sigma.ndim != 2 or sigma.shape[0] != sigma.shape[1]:
++        raise ValueError("sigma must be square")
++    d = sigma.shape[0]
++    check_dimensions(d, 1, n)
++    if not np.isfinite(sigma).all() or not np.allclose(sigma, sigma.T, atol=1e-12):
++        raise ValueError("sigma must be finite and symmetric")
++    np.linalg.cholesky(sigma)  # population must be strictly positive definite
++    if isinstance(m, bool) or not isinstance(m, (int, np.integer)) or m < 1:
++        raise ValueError("m must be a positive integer")
++    if method not in ("gaussian", "wishart"):
++        raise ValueError("unknown sampling method")
++    if method == "gaussian" or n-1 < d:
++        return np.stack([centered_sample_covariance(gaussian_observations(sigma, n, rng))
++                         for _ in range(m)])
++    samples = wishart.rvs(df=n-1, scale=sigma, size=m, random_state=rng) / (n-1)
++    return np.asarray(samples).reshape(m, d, d)
++
++
++def measurements(covariance, population_basis, n, k):
++    """One eigendecomposition; retain unaltered spectra and projector loss."""
++    check_dimensions(np.shape(covariance)[-1], k, n)
++    lam, vectors = np.linalg.eigh(covariance)
++    lam, vectors = lam[..., ::-1], vectors[..., ::-1]
++    raw = spectrum_benchmark(lam, n, k)
++    loss = projector_loss(vectors[..., :k], population_basis)
++    return loss, raw, capped_benchmark(raw), lam[..., k-1]-lam[..., k]
+diff --git a/src/spectral_stability/e3_statistics.py b/src/spectral_stability/e3_statistics.py
+new file mode 100644
+index 0000000..06c5a7a
+--- /dev/null
++++ b/src/spectral_stability/e3_statistics.py
+@@ -0,0 +1,140 @@
++"""Independent-replication Monte Carlo inference; no raw mean/MAE/RMSE.
++
++All intervals are pointwise 95%, not simultaneous confidence statements.
++The joint nonparametric bootstrap uses one index matrix for complete records.
++"""
++from __future__ import annotations
++
++import numpy as np
++from scipy.stats import binom, norm, t
++
++QUANTILES = (.05, .25, .50, .75, .95, .99)
++METRICS = ("median_prediction", "median_signed_error", "median_absolute_error",
++           "relative_median_absolute_error", "relative_underprediction",
++           "capped_mae", "capped_rmse", "median_sample_eigenvalue_error",
++           "plugin_tolerance_margin", "risk")
++
++
++def mean_interval(values):
++    x = np.asarray(values, dtype=float)
++    if x.ndim != 1 or len(x) < 2 or not np.isfinite(x).all():
++        raise ValueError("need at least two finite independent observations")
++    risk = float(x.mean())
++    se = float(x.std(ddof=1)/np.sqrt(len(x)))
++    half = t.ppf(.975, len(x)-1)*se
++    return risk, se, risk-half, risk+half
++
++
++def relative_frequency_interval(loss, raw):
++    """Risk-adaptive event P(raw < .5 R): a conservative joint-band CI.
++
++    Allocate 2.5% failure to a 97.5% Student risk CI and 2.5% to the uniform
++    Dvoretzky-Kiefer-Wolfowitz CDF band. The union bound does not require
++    independence of losses/predictions. Coverage inherits the Student interval's
++    approximation; the CDF component is finite-sample distribution-free.
++    Unlike a percentile bootstrap, the bound stays nondegenerate at zero events.
++    """
++    loss, raw = np.asarray(loss), np.asarray(raw)
++    risk, se, _, _ = mean_interval(loss)
++    if raw.shape != loss.shape or not np.isfinite(raw).all():
++        raise ValueError('need finite matched loss and prediction vectors')
++    half = t.ppf(1-.025/2, len(loss)-1)*se
++    lower_risk, upper_risk = max(0.,risk-half), min(1.,risk+half)
++    epsilon = np.sqrt(np.log(2/.025)/(2*len(raw)))
++    lo = max(0.,float(np.mean(raw < .5*lower_risk))-epsilon)
++    hi = min(1.,float(np.mean(raw < .5*upper_risk))+epsilon)
++    return lo, hi
++
++
++def wilson_interval(successes, count):
++    if not 0 <= successes <= count or count < 1:
++        raise ValueError("invalid binomial counts")
++    p, z = successes/count, norm.ppf(.975)
++    denominator = 1+z*z/count
++    center = (p+z*z/(2*count))/denominator
++    half = z*np.sqrt(p*(1-p)/count+z*z/(4*count**2))/denominator
++    return max(0., center-half), min(1., center+half)
++
++
++def quantile_interval(values, probability):
++    """Conservative binomial order-statistic CI, valid also with capped ties.
++
++    Open endpoints are +/-infinity when sample size cannot support a finite
++    distribution-free bound. No percentile or rank jitter is introduced.
++    """
++    x = np.sort(np.asarray(values, dtype=float))
++    if len(x) < 1 or not np.isfinite(x).all() or not 0 < probability < 1:
++        raise ValueError("invalid quantile data or probability")
++    # K=#observations below the population q-quantile; choose l,u such that
++    # P(K<l)<=.025 and P(K>=u)<=.025. X_(0)=-inf; X_(M+1)=inf.
++    lower_rank = int(binom.ppf(.025, len(x), probability))
++    upper_rank = int(binom.ppf(.975, len(x), probability))+1
++    lo = x[lower_rank-1] if lower_rank >= 1 else -np.inf
++    hi = x[upper_rank-1] if upper_rank <= len(x) else np.inf
++    return float(lo), float(hi)
++
++
++def tolerance(risk):
++    return np.maximum(.002, .20*np.asarray(risk))
++
++
++def oracle_label(benchmark, lower, upper):
++    """Check the entire risk CI, including both piecewise-linear breakpoints."""
++    points = [lower, upper]
++    points += [p for p in (.002/.20, benchmark) if lower <= p <= upper]
++    points = np.asarray(points)
++    margins = np.abs(benchmark-points)-tolerance(points)
++    if np.max(margins) <= 0:
++        return "within"
++    if np.min(margins) > 0:
++        return "outside"
++    return "uncertain"
++
++
++def joint_metrics(records, benchmark):
++    """records[..., replication, (loss,raw,capped,gap)] -> paired statistics."""
++    records = np.asarray(records, dtype=float)
++    loss, raw, cap = records[..., 0], records[..., 1], records[..., 2]
++    risk = np.mean(loss, axis=-1)
++    if np.any(risk <= 0) or not np.isfinite(records).all():
++        raise ValueError("positive risk and complete finite records required")
++    absolute = np.abs(raw-risk[..., None])
++    median = np.median(raw, axis=-1)
++    mad = np.median(absolute, axis=-1)
++    capped_error = cap-risk[..., None]
++    return np.stack((median, median-risk, mad, mad/risk,
++                     np.mean(raw < .5*risk[..., None], axis=-1),
++                     np.mean(np.abs(capped_error), axis=-1),
++                     np.sqrt(np.mean(capped_error**2, axis=-1)),
++                     np.median(raw-benchmark, axis=-1),
++                     mad-tolerance(risk), risk), axis=-1)
++
++
++def bootstrap_metrics(records, benchmark, rng, repetitions, batch=100):
++    """Resample rows, never columns. Recompute the risk in every bootstrap."""
++    records = np.asarray(records)
++    if records.ndim != 2 or records.shape[1] != 4 or len(records) < 2:
++        raise ValueError("records must have shape (M>=2,4)")
++    if repetitions < 100 or batch < 1:
++        raise ValueError("need at least 100 bootstrap resamples and positive batch")
++    output = []
++    for start in range(0, repetitions, batch):
++        indices = rng.integers(0, len(records), (min(batch, repetitions-start), len(records)))
++        output.append(joint_metrics(records[indices], benchmark))
++    return np.concatenate(output)
++
++
++def percentile_interval(values):
++    return tuple(np.quantile(values, [.025, .975], axis=0))
++
++
++def calibration_edges(predictions):
++    """Merge repeated quantile edges; never split observations with tied caps."""
++    edges = np.unique(np.quantile(predictions, np.linspace(0, 1, 6)))
++    if len(edges) == 1:
++        return np.array([-np.inf, np.inf])
++    return np.r_[-np.inf, edges[1:-1], np.inf]
++
++
++def calibration_groups(predictions, edges):
++    return np.searchsorted(edges[1:-1], predictions, side="left")
+diff --git a/tests/__init__.py b/tests/__init__.py
+new file mode 100644
+index 0000000..c1ce8ef
+--- /dev/null
++++ b/tests/__init__.py
+@@ -0,0 +1 @@
++"""Automated E3 mathematical and inference validation."""
+diff --git a/tests/test_e3_math.py b/tests/test_e3_math.py
+new file mode 100644
+index 0000000..e88370e
+--- /dev/null
++++ b/tests/test_e3_math.py
+@@ -0,0 +1,144 @@
++import unittest
++import numpy as np
++from numpy.testing import assert_allclose
++from scipy.linalg import subspace_angles
++
++from PCA_stability import (centered_sample_covariance, first_order_benchmark,
++                           normalized_projector_loss, top_k_eigenvectors)
++from spectral_stability.e3_math import (LOSS_TOLERANCE, capped_benchmark, measurements,
++    projector_loss, sample_covariances, spectrum_benchmark)
++from experiments.e3.design import (configurations, eigenvalues, read_config, seed_sequence)
++from experiments.e3.simulation import simulate_configuration
++
++
++class Projectors(unittest.TestCase):
++    def test_general_dimensions_projectors_angles_and_invariances(self):
++        rng = np.random.default_rng(919)
++        for d,k in [(2,1),(6,2),(9,7),(12,3)]:
++            population,_ = np.linalg.qr(rng.normal(size=(d,k)))
++            estimated,_ = np.linalg.qr(rng.normal(size=(d,k)))
++            rotation,_ = np.linalg.qr(rng.normal(size=(k,k)))
++            for basis in (population,estimated,top_k_eigenvectors(np.diag(np.arange(d,0,-1)),k)):
++                p = basis@basis.T
++                assert_allclose(p,p.T,atol=1e-12)
++                assert_allclose(p@p,p,atol=1e-12)
++                self.assertEqual(np.linalg.matrix_rank(p),k)
++                self.assertAlmostEqual(np.trace(p),k)
++            loss = projector_loss(estimated,population)
++            self.assertGreaterEqual(loss,-LOSS_TOLERANCE)
++            self.assertLessEqual(loss,1+LOSS_TOLERANCE)
++            self.assertAlmostEqual(float(projector_loss(population,population)),0.)
++            assert_allclose(projector_loss(estimated@rotation,-population),loss,atol=1e-12)
++            assert_allclose(np.mean(np.sin(subspace_angles(estimated,population))**2),loss,atol=1e-12)
++            assert_allclose(normalized_projector_loss(estimated,population),loss,atol=1e-12)
++
++    def test_known_angles_and_orthogonal_loss(self):
++        p = np.eye(4)[:,:2]
++        self.assertAlmostEqual(float(projector_loss(np.eye(4)[:,2:],p)),1.)
++        theta = .42
++        q = np.array([[np.cos(theta),0],[0,1],[np.sin(theta),0],[0,0]])
++        self.assertAlmostEqual(float(projector_loss(q,p)),np.sin(theta)**2/2)
++
++
++class SpectraAndBenchmarks(unittest.TestCase):
++    def test_entire_frozen_grid(self):
++        config = read_config()
++        self.assertEqual(len(configurations(config)),84)
++        for c in configurations(config):
++            lam = eigenvalues(c['delta'],c['t'])
++            self.assertEqual(len(lam),12)
++            self.assertTrue((lam>0).all())
++            self.assertTrue((np.diff(lam)<=0).all())
++            self.assertAlmostEqual(lam[2]-lam[3],c['delta'])
++            self.assertAlmostEqual(lam.sum(),23.)
++            self.assertEqual(lam[0],6.)
++            basis = top_k_eigenvectors(np.diag(lam),3)
++            assert_allclose(basis@basis.T,np.diag([1]*3+[0]*9),atol=1e-12)
++            assert_allclose(spectrum_benchmark(lam,c['n'],3),
++                            first_order_benchmark(np.diag(lam),c['n'],3),rtol=1e-12)
++
++    def test_hand_computed_examples_and_n_minus_one(self):
++        # (3*1)/(3-1)^2 /(n-1=10) = 3/40.
++        self.assertAlmostEqual(float(spectrum_benchmark([3.,1.],11,1)),3/40)
++        # top=(4,2), bottom=(1): sum=4/9+2=22/9; /[2*10]=11/90.
++        self.assertAlmostEqual(float(spectrum_benchmark([4.,2.,1.],11,2)),11/90)
++        x = np.array([[1.,2.],[3.,0.],[5.,4.]])
++        assert_allclose(centered_sample_covariance(x),[[4.,2.],[2.,4.]])
++        assert_allclose(centered_sample_covariance(x+100),centered_sample_covariance(x))
++
++    def test_raw_extreme_no_floor_no_cap(self):
++        a = float(spectrum_benchmark([1+1e-7,1.,.1],50,1))
++        b = float(spectrum_benchmark([1+2e-7,1.,.1],50,1))
++        self.assertGreater(a,1e12)
++        assert_allclose(a/b,4.,rtol=1e-6)
++        self.assertEqual(float(capped_benchmark(a)),1.)
++        self.assertTrue(np.isinf(spectrum_benchmark([1.,1.],50,1)))
++        self.assertTrue(np.isnan(capped_benchmark(np.nan)))
++
++    def test_measurements_general_shapes(self):
++        for d,k,n in [(3,1,9),(7,4,20)]:
++            covariance = np.diag(np.arange(d,0,-1,dtype=float))
++            loss,raw,cap,gap = measurements(covariance,np.eye(d)[:,:k],n,k)
++            self.assertEqual(loss,0.)
++            self.assertEqual(gap,1.)
++            self.assertEqual(cap,min(1.,raw))
++
++    def test_invalid_arguments(self):
++        for lam,n,k in [([2.,1.],1,1),([2.,-1.],10,1),([1.,2.],10,1),([2.,1.],10,2)]:
++            with self.assertRaises(ValueError):
++                spectrum_benchmark(lam,n,k)
++        with self.assertRaises(TypeError):
++            spectrum_benchmark([2.,1.],True,1)
++
++
++class Sampling(unittest.TestCase):
++    def test_direct_gaussian_and_wishart_moments_and_risk(self):
++        # Four contrasting protocol configurations, 3000 per method each.
++        # 6 Monte Carlo SE tolerances control chance failures across many checks.
++        m = 3000
++        for index,(n,delta,t) in enumerate([(50,.05,0.),(50,.05,.8),(500,1.,0.),(2000,1.,.8)]):
++            sigma = np.diag(eigenvalues(delta,t))
++            samples,risks = [],[]
++            for method,j in [('gaussian',0),('wishart',1)]:
++                rng = np.random.default_rng(np.random.SeedSequence(48151,spawn_key=(index,j)))
++                cov = sample_covariances(sigma,n,m,rng,method)
++                samples.append(cov)
++                for a,b in [(0,0),(2,2),(11,11),(0,2),(3,11)]:
++                    expected_var = (sigma[a,a]*sigma[b,b]+sigma[a,b]**2)/(n-1)
++                    self.assertLess(abs(cov[:,a,b].mean()-sigma[a,b]),6*np.sqrt(expected_var/m))
++                    x = cov[:,a,b]
++                    variance = x.var(ddof=1)
++                    variance_se = np.sqrt((np.mean((x-x.mean())**4)-variance**2)/m)
++                    self.assertLess(abs(variance-expected_var),6*variance_se)
++                loss = measurements(cov,np.eye(12)[:,:3],n,3)[0]
++                risks.append((loss.mean(),loss.std(ddof=1)/np.sqrt(m)))
++            difference = abs(risks[0][0]-risks[1][0])
++            combined_se = np.hypot(risks[0][1],risks[1][1])
++            self.assertLess(difference,6*combined_se)
++            print(f'Sampling validation n={n} delta={delta} t={t}: '
++                  f'Gaussian risk={risks[0][0]:.6f}, Wishart={risks[1][0]:.6f}, '
++                  f'difference/combined SE={difference/combined_se:.3f}',flush=True)
++
++    def test_general_rotated_covariance_moments(self):
++        sigma = np.array([[3.,.7,0],[.7,2.,.2],[0,.2,1.]])
++        for j,method in enumerate(['gaussian','wishart']):
++            sample = sample_covariances(sigma,35,5000,np.random.default_rng(201+j),method)
++            se = np.sqrt((np.outer(sigma.diagonal(),sigma.diagonal())+sigma**2)/34/5000)
++            self.assertTrue((np.abs(sample.mean(axis=0)-sigma)<6*se).all())
++
++    def test_singular_sample_covariance_falls_back_to_gaussian(self):
++        a = sample_covariances(np.eye(5),3,4,np.random.default_rng(5),'wishart')
++        b = sample_covariances(np.eye(5),3,4,np.random.default_rng(5),'gaussian')
++        assert_allclose(a,b,atol=0,rtol=0)
++        self.assertTrue(all(np.linalg.matrix_rank(x)==2 for x in a))
++
++    def test_seed_streams_unique_and_reproducible(self):
++        config = read_config()
++        keys = [tuple(seed_sequence(config,stage,c['config_index'],purpose).spawn_key)
++                for stage in ['smoke','pilot','confirmation_reserved']
++                for c in configurations(config) for purpose in (0,1,2)]
++        self.assertEqual(len(keys),len(set(keys)))
++        condition = configurations(config)[0]
++        a = simulate_configuration(config,condition,'smoke',10)
++        b = simulate_configuration(config,condition,'smoke',10)
++        self.assertTrue(a.equals(b))
+diff --git a/tests/test_e3_statistics.py b/tests/test_e3_statistics.py
+new file mode 100644
+index 0000000..2e347f8
+--- /dev/null
++++ b/tests/test_e3_statistics.py
+@@ -0,0 +1,168 @@
++import unittest
++from unittest.mock import patch
++import numpy as np
++from numpy.testing import assert_allclose
++from scipy.stats import binom
++
++import spectral_stability.e3_statistics as statistics
++from spectral_stability.e3_statistics import (METRICS, bootstrap_metrics,
++    calibration_edges, calibration_groups, joint_metrics, mean_interval,
++    oracle_label, percentile_interval, quantile_interval, relative_frequency_interval,
++    wilson_interval)
++
++
++class Intervals(unittest.TestCase):
++    def test_mcse_and_student_interval_hand_values(self):
++        risk,se,lo,hi = mean_interval([0.,.2,.4,.6])
++        self.assertAlmostEqual(risk,.3)
++        self.assertAlmostEqual(se,np.sqrt(1/60))
++        self.assertAlmostEqual(lo,.3-3.182446305284263*np.sqrt(1/60),places=10)
++        self.assertAlmostEqual(hi,.3+3.182446305284263*np.sqrt(1/60),places=10)
++
++    def test_wilson_boundaries_and_known_values(self):
++        assert_allclose(wilson_interval(0,100),[0.,.03699349820698568],atol=1e-14)
++        assert_allclose(wilson_interval(100,100),[.9630065017930143,1.],atol=1e-14)
++        lo,hi = wilson_interval(50,100)
++        self.assertAlmostEqual(lo+hi,1.)
++        self.assertTrue(lo<.5<hi)
++
++    def test_order_statistic_coverage_exact_and_ties(self):
++        m = 1000
++        x = np.arange(1,m+1,dtype=float)
++        for probability in (.05,.25,.5,.75,.95,.99):
++            lo,hi = quantile_interval(x,probability)
++            lower_rank,upper_rank = int(lo),int(hi)
++            coverage = binom.cdf(upper_rank-1,m,probability)-binom.cdf(lower_rank-1,m,probability)
++            self.assertGreaterEqual(coverage,.95-1e-12)
++        self.assertEqual(quantile_interval(np.ones(100),.5),(1.,1.))
++        self.assertTrue(np.isposinf(quantile_interval(np.arange(40),.99)[1]))
++
++    def test_mean_interval_and_bootstrap_mean_empirical_coverage(self):
++        rng = np.random.default_rng(83972)
++        hits_t,hits_bootstrap = 0,0
++        for _ in range(400):
++            loss = rng.uniform(0,1,60)
++            _,_,lo,hi = mean_interval(loss)
++            hits_t += lo<=.5<=hi
++            records = np.column_stack([loss,.2+.2*loss,.2+.2*loss,1+loss])
++            draws = bootstrap_metrics(records,.4,rng,500)
++            lo,hi = percentile_interval(draws[:,METRICS.index('risk')])
++            hits_bootstrap += lo<=.5<=hi
++        # Binomial sampling error at 400 trials plus bootstrap finite-sample error.
++        self.assertTrue(.89 < hits_t/400 < .99)
++        self.assertTrue(.89 < hits_bootstrap/400 < .99)
++
++    def test_oracle_classification_checks_whole_interval(self):
++        self.assertEqual(oracle_label(.5,.49,.51),'within')
++        self.assertEqual(oracle_label(.5,.2,.3),'outside')
++        self.assertEqual(oracle_label(.5,.2,.8),'uncertain')
++        self.assertEqual(oracle_label(.009,.006,.012),'uncertain')
++        self.assertEqual(oracle_label(.009,.008,.010),'within')
++
++    def test_relative_frequency_joint_interval_zero_and_coverage(self):
++        lo,hi = relative_frequency_interval(np.full(1000,.3),np.ones(1000))
++        self.assertEqual(lo,0.)
++        self.assertGreater(hi,0.)
++        self.assertLess(hi,.05)
++        rng = np.random.default_rng(2671)
++        hits = 0
++        for _ in range(400):
++            loss = rng.uniform(0,1,80)
++            raw = .1+.8*loss  # R=.5, true P(raw<.25)=.1875; matched dependence
++            lo,hi = relative_frequency_interval(loss,raw)
++            hits += lo <= .1875 <= hi
++        self.assertGreaterEqual(hits/400,.95)
++
++
++class BootstrapAndTargets(unittest.TestCase):
++    def setUp(self):
++        # Skewness ensures median(L) != mean(L), separating the two targets.
++        self.loss = .05+.85*np.linspace(0,1,80)**2
++        self.raw = 3*self.loss+.1
++        self.records = np.column_stack([self.loss,self.raw,np.minimum(1,self.raw),5-self.loss])
++
++    def test_bootstrap_preserves_complete_records_and_recomputes_risk(self):
++        seen = []
++        original = joint_metrics
++        def tracked(records,benchmark):
++            assert_allclose(records[...,1],3*records[...,0]+.1)
++            assert_allclose(records[...,2],np.minimum(1,records[...,1]))
++            assert_allclose(records[...,3],5-records[...,0])
++            seen.append(records.copy())
++            return original(records,benchmark)
++        with patch.object(statistics,'joint_metrics',side_effect=tracked):
++            draws = bootstrap_metrics(self.records,.5,np.random.default_rng(234),200,batch=40)
++        sampled = np.concatenate(seen)
++        for index in (0,50,199):
++            rows = sampled[index]
++            risk = rows[:,0].mean()
++            self.assertAlmostEqual(draws[index,METRICS.index('risk')],risk)
++            self.assertAlmostEqual(draws[index,METRICS.index('median_absolute_error')],
++                                   np.median(np.abs(rows[:,1]-risk)))
++            self.assertAlmostEqual(draws[index,METRICS.index('relative_underprediction')],
++                                   np.mean(rows[:,1]<.5*risk))
++        self.assertGreater(np.std(draws[:,-1]),0)
++
++    def test_bootstrap_risk_sd_matches_mcse(self):
++        draws = bootstrap_metrics(self.records,.5,np.random.default_rng(811),4000)
++        _,se,_,_ = mean_interval(self.loss)
++        self.assertLess(abs(draws[:,-1].std(ddof=1)/se-1),.06)
++
++    def test_target_is_population_risk_not_realized_loss(self):
++        metric = joint_metrics(self.records,.5)
++        risk = self.loss.mean()
++        self.assertAlmostEqual(metric[METRICS.index('median_absolute_error')],
++                               np.median(abs(self.raw-risk)))
++        self.assertNotAlmostEqual(metric[METRICS.index('median_absolute_error')],
++                                  np.median(abs(self.raw-self.loss)))
++        self.assertAlmostEqual(metric[METRICS.index('capped_mae')],
++                               np.abs(self.records[:,2]-risk).mean())
++        self.assertTrue((np.abs(self.records[:,2]-risk)<=np.abs(self.raw-risk)+1e-14).all())
++        self.assertAlmostEqual(metric[METRICS.index('median_signed_error')],
++            metric[METRICS.index('median_sample_eigenvalue_error')]+.5-risk)
++
++    def test_invalid_records_refused_not_dropped(self):
++        broken = self.records.copy()
++        broken[0,1] = np.inf
++        with self.assertRaises(ValueError):
++            bootstrap_metrics(broken,.5,np.random.default_rng(3),200)
++
++    def test_tied_caps_merged_and_never_split(self):
++        predictions = np.r_[np.linspace(.01,.8,200),np.ones(800)]
++        edges = calibration_edges(predictions)
++        groups = calibration_groups(predictions,edges)
++        self.assertLess(len(edges)-1,5)
++        self.assertEqual(len(np.unique(groups[predictions==1])),1)
++        self.assertEqual(sum((groups==g).sum() for g in np.unique(groups)),1000)
++        all_tied = calibration_edges(np.ones(100))
++        self.assertEqual(len(all_tied)-1,1)
++        self.assertTrue((calibration_groups(np.ones(100),all_tied)==0).all())
++
++
++class FailureRecording(unittest.TestCase):
++    def test_nonfinite_and_measurement_failures_are_retained(self):
++        from experiments.e3.design import read_config,configurations
++        from experiments.e3.simulation import simulate_configuration
++        config = read_config()
++        c = configurations(config)[0]
++        with patch('experiments.e3.simulation.measurements',return_value=(
++                np.array([.2,.3]),np.array([np.inf,np.nan]),np.array([1.,np.nan]),np.array([0.,.1]))):
++            result = simulate_configuration(config,c,'smoke',2)
++        self.assertEqual(len(result),2)
++        self.assertTrue(result.failure.all())
++        self.assertTrue(np.isinf(result.plugin_raw.iloc[0]))
++        with patch('experiments.e3.simulation.measurements',side_effect=np.linalg.LinAlgError('test failure')):
++            result = simulate_configuration(config,c,'smoke',2)
++        self.assertEqual(len(result),2)
++        self.assertTrue(result.failure.all())
++        self.assertTrue(result.numerical_error.str.contains('test failure').all())
++
++    def test_out_of_range_loss_flagged_without_clipping(self):
++        from experiments.e3.design import read_config,configurations
++        from experiments.e3.simulation import simulate_configuration
++        config = read_config()
++        with patch('experiments.e3.simulation.measurements',return_value=(
++                np.array([1.01]),np.array([5.]),np.array([1.]),np.array([.1]))):
++            result = simulate_configuration(config,configurations(config)[0],'smoke',1)
++        self.assertEqual(result.loss.iloc[0],1.01)
++        self.assertTrue(result.loss_out_of_bounds.iloc[0])

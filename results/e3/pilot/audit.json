@@ -1,0 +1,31 @@
+{
+  "passed": true,
+  "checks": {
+    "source_hashes_current": true,
+    "protocol_unchanged": true,
+    "all_artifact_hashes": true,
+    "replications_hash": true,
+    "validation_reference": true,
+    "smoke_reference": true,
+    "counts_and_grid": true,
+    "unique_ids": true,
+    "finite_all_records": true,
+    "zero_failures": true,
+    "actual_losses_in_unit_interval": true,
+    "caps_exact": true,
+    "extremes_retained": true,
+    "unique_simulation_keys": true,
+    "independent_summary_formulas_and_oracle_labels": true,
+    "selected_pilot_streams_exactly_recovered": true,
+    "secondary_complete": true,
+    "figures_complete": true,
+    "regenerated_tables_identical": true
+  },
+  "run_id": "pilot-e5b01b6e772e-2026111303",
+  "replications": 84000,
+  "configurations": 84,
+  "replications_each": 1000,
+  "raw_exceeds_one": 3032,
+  "maximum_raw": 8527.07189050882,
+  "maximum_decomposition_residual": 5.551115123125783e-16
+}

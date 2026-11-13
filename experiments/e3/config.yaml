@@ -1,0 +1,12 @@
+# Frozen primary pilot design from E3.md. No confirmation command is provided.
+d: 12
+k: 3
+n_values: [50, 100, 250, 500, 1000, 2000]
+delta_values: [0.05, 0.10, 0.20, 0.35, 0.50, 0.75, 1.00]
+t_values: [0.0, 0.8]
+pilot_replications: 1000
+smoke_replications: 40
+bootstrap_repetitions: 2000
+root_seed: 2026111303
+sampling: wishart
+seed_namespaces: {smoke: 0, pilot: 1, confirmation_reserved: 2}

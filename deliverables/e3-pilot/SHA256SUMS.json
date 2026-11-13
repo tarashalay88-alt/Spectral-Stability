@@ -1,0 +1,23 @@
+{
+  "E3-completion-report.md": "1cd3db9f23624875e1c252aae8d0e7f79d35aa81c557373391ef6da63e5a2be7",
+  "E3-pilot-bundle.zip": "98d3904abc202d3736527da1defb69c12b11281b8ca7acef7ee5270858bcfa49",
+  "E3-pilot-report.md": "6b9a2af7a900ef725cff33b8ddaf242245a5003dd04390b513dee1a43a78455a",
+  "README.txt": "98c9fc8254953191624179716b1ec2a5a84d613021df31f604f467ac20358fd3",
+  "e3-implementation.patch": "29706dcfaca3a4e27ea676533e18bada969ccef47aff791887db1d9430c959d2",
+  "figures/oracle_absolute_error.png": "b0bf5372ce116dc84f2e66345d262b7062d57aa5d1bcf8acb8790bc670604f6b",
+  "figures/oracle_absolute_error.svg": "20d906bc85c1b54df505e40939a0ef221893c71791f41c851d3ca55b538a84e5",
+  "figures/oracle_relative_error.png": "f517837c12e00adfe56f303980e4b7d0ec9b797ef85d405182de6b44a3281e20",
+  "figures/oracle_relative_error.svg": "0a82176535670ac000132f68b4c3ee3017cd90101fba47ebb512f1ea3bc14fb5",
+  "figures/oracle_signed_error.png": "84dc57c0705249e1d0951a3f221a025d7027ca1c94fc765c37ee4a3f9aad2e43",
+  "figures/oracle_signed_error.svg": "348d48c6bea13effa2b908e3139256719cd326125ff163f2c794587160563bc2",
+  "figures/prediction_spread.png": "4f3570cdf33e7ff76a85c2363d35567772df9a724e5ec9c261e7f18ed8d69dad",
+  "figures/prediction_spread.svg": "bd8a9bc05d0c91c19545891d42047ae326cbd19d9d46650ec872602af4956712",
+  "figures/relative_median_absolute_error.png": "b891eacfeb126f639e879069817b23da1c864b4a2314818ccdd555d40bc2a9c2",
+  "figures/relative_median_absolute_error.svg": "9eb6a30bef526a6b5cc495cbbe02dd5bd5173c735c831c48559e1a513195e706",
+  "figures/relative_underprediction.png": "7e6884be8b32306b33ba8afa7680af722e7a58d8d59514366994767ba48a80f0",
+  "figures/relative_underprediction.svg": "87576d7032e8921ff220daf58f7089b0b07de886c810dfe12784adc17efa2e29",
+  "figures/serious_underprediction.png": "f3ce76ae6232ee2399bcb7558395bd7dbdae8ae4eedbcb6ea33579ed06c931d6",
+  "figures/serious_underprediction.svg": "d92cd38240b84c5867fd012026d29f1fcce033d76fb1b4ff566511e780cf2260",
+  "run_manifest.json": "6aa9baf0476f5793a70485dc88b2839e8b1b29428c4d660476d0c5393e3c1988",
+  "summary.csv": "ff7db5e507748baf7c7b6e503b0d3cac458a0a07a249c2328c0434b1df76bd0d"
+}
