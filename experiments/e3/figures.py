@@ -52,8 +52,7 @@ def make_figures(summary, output, run_id):
                    ylabel='Population boundary eigengap δ', title=f'Background t={t:g}')
         fig.colorbar(im, ax=axes, shrink=.85, label='Log color scale' if logarithmic else 'Value')
         fig.suptitle(title+'\n'+footer, fontsize=10)
-        for suffix in ('png','svg'):
-            fig.savefig(output/f'{metric}.{suffix}', dpi=160)
+        fig.savefig(output/f'{metric}.png',dpi=160)
         plt.close(fig)
     fig, axes = plt.subplots(len(ns), 2, figsize=(11, 2.6*len(ns)), squeeze=False,
                              layout='constrained')
@@ -74,6 +73,5 @@ def make_figures(summary, output, run_id):
             ax.grid(alpha=.2)
     axes[0,0].legend(fontsize=7, ncols=2)
     fig.suptitle('Raw plug-in prediction spread (log y scale)\n'+footer, fontsize=10)
-    for suffix in ('png','svg'):
-        fig.savefig(output/f'prediction_spread.{suffix}', dpi=160)
+    fig.savefig(output/'prediction_spread.png',dpi=160)
     plt.close(fig)

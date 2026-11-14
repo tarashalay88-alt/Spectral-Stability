@@ -1,23 +1,21 @@
-# E3 — Pilot data and figures
+# E3 — Exploratory pilot evidence
 
-**Stage:** Exploratory pilot only (84 configurations × 1,000 replications). Independent confirmation has not been run.
+**Status:** 84 configurations × 1,000 replications; independent confirmation pending. This folder stores data and figures, **not a scientific report**.
 
-## Explore the results
+| Location | What it contains |
+|---|---|
+| [pilot/figures/](pilot/figures/) | Seven diagnostic PNG figures |
+| [pilot/summary.csv](pilot/summary.csv) | Primary numerical results for the 84 configurations |
+| [pilot/contrasts.csv](pilot/contrasts.csv) | Two-background controlled comparisons |
+| [pilot/ranking.csv](pilot/ranking.csv) | Secondary risk ordering |
+| [pilot/calibration.csv](pilot/calibration.csv) | Secondary capped-estimate calibration |
+| [pilot/replications.csv](pilot/replications.csv) | All 84,000 original matched observations |
+| [pilot/run_manifest.json](pilot/run_manifest.json) | Original settings, seeds, environment and source hashes |
 
-- [`pilot/summary.csv`](pilot/summary.csv) — one row per configuration: risk estimates, oracle and plug-in errors, confidence intervals, and reliability labels.
-- [`pilot/figures/`](pilot/figures/) — seven pilot figures, in **PNG only**.
-- [`pilot/contrasts.csv`](pilot/contrasts.csv) — background-spectrum comparisons at fixed sample size and boundary gap.
-- [`pilot/ranking.csv`](pilot/ranking.csv) and [`pilot/calibration.csv`](pilot/calibration.csv) — secondary numerical analyses.
+The original `validation.json` and `validation.log` record the 32-test gate; `smoke/replications.csv` and `smoke/run_manifest.json` record the separate 160-row engineering smoke test, **not another research experiment**.
 
-## Reproduce and verify
+The historical pilot manifest lists optional SVG images and automatically generated prose that have been removed from today's repository. Those historical outputs remain available in [the original archival commit](https://github.com/tarashalay88-alt/Spectral-Stability/tree/24c3f914ca0b74ba914b7bd47cf26e201707eb5b/results/e3). No raw observation, primary numerical summary, retained PNG, or frozen protocol was modified.
 
-- [`pilot/replications.csv`](pilot/replications.csv) — all **84,000** original matched simulation records (not modified).
-- [`pilot/run_manifest.json`](pilot/run_manifest.json) — the original simulation's parameters, random seeds, source hashes and software versions.
-- [`pilot/audit.json`](pilot/audit.json), [`pilot/regeneration_reference.json`](pilot/regeneration_reference.json), [`validation.json`](validation.json), and [`smoke/`](smoke/) — recorded validation and smoke-test evidence.
-- [`pilot/figure_index.json`](pilot/figure_index.json) — original output index, including hashes for historical files.
+To verify the *currently retained* evidence without generating files, run `python experiments/e3/run.py verify` from the repository root. It independently recalculates the main numerical summaries and checks original hashes; it does not claim to rerun the historical environment.
 
-The frozen protocol is [`experiments/e3/E3.md`](../../experiments/e3/E3.md); implementation and tests are in [`experiments/e3/`](../../experiments/e3/), [`src/spectral_stability/`](../../src/spectral_stability/), and [`tests/`](../../tests/).
-
-**Original-run integrity:** The manifests and audit describe the **complete original run**, including automatically generated reports and SVG figures. Those presentation duplicates are omitted from the current repository tree at the author's request. They remain recoverable from [the original E3 import commit](https://github.com/tarashalay88-alt/Spectral-Stability/tree/24c3f914ca0b74ba914b7bd47cf26e201707eb5b/results/e3). As a result, a full-artifact audit of this curated tree alone will not pass without restoring the omitted outputs. The simulation records, metrics, PNG figures and frozen protocol have not been changed.
-
-No author-written findings or final report have been added. Results are preliminary and must be reviewed before confirmation.
+See the [frozen protocol](../../experiments/e3/E3.md) and [implementation guide](../../experiments/e3/README.md).

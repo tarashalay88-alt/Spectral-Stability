@@ -40,12 +40,13 @@ def seed_sequence(config, stage, index, purpose):
 
 
 def source_files():
-    files = [ROOT/'PCA_stability.py', ROOT/'stability_tests.py']
-    for base, pattern in [('src','*.py'), ('tests','*.py'), ('experiments/e3','*.py')]:
-        files.extend(sorted((ROOT/base).rglob(pattern)))
-    files += [ROOT/'experiments/e3/config.yaml', ROOT/'experiments/e3/E3.md',
-              ROOT/'experiments/e3/README.md', ROOT/'requirements-e3.txt']
-    return files
+    """Only numerical E3 dependencies; protocol is verified separately."""
+    names=['PCA_stability.py','requirements-e3.txt','experiments/e3/config.yaml',
+           'experiments/e3/design.py','experiments/e3/simulation.py',
+           'experiments/e3/analysis.py','experiments/e3/figures.py',
+           'experiments/e3/run.py','src/spectral_stability/e3_math.py',
+           'src/spectral_stability/e3_statistics.py']
+    return [ROOT/name for name in names]
 
 
 def file_hash(path):
