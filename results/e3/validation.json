@@ -1,0 +1,31 @@
+{
+  "errors": 0,
+  "failures": 0,
+  "log_sha256": "939fda676e0d67cc7e5b015ab172bd51ff4f9b1b79fd896efd3720d5552e305e",
+  "passed": true,
+  "seconds": 4.429348389999973,
+  "skipped": 0,
+  "source_fingerprint": "e5b01b6e772e363418487848636f9861b78bd25724304b911e7164c67c26d1c9",
+  "source_hashes": {
+    "PCA_stability.py": "e68c28a3dda60bef50c61e5218b8aeb70226748ad01fb44899d63cf2d3c50c06",
+    "experiments/e3/E3.md": "9f20696518f7263b77dbf72eeb3b431548f06d31b74d293baa1a8246f35d4edb",
+    "experiments/e3/README.md": "b62eafef4a92fa44a3c40693b534d07c0c18a35f305db2690106639e21d5f046",
+    "experiments/e3/analysis.py": "2b39deb1a71d9042aa26657c3f34a85484977aac2fadd56f0bafeab70a78b7db",
+    "experiments/e3/config.yaml": "5c9c6ba058bf35452637d7bb3d139b810f49365a1e5e013a93fdbeb3f98f2fae",
+    "experiments/e3/design.py": "f7ebf17de2a278ce627b877e0c889437ebcd89d0402b3775f2483ca6ff6c8d11",
+    "experiments/e3/figures.py": "e3038ff1b822c9d228e5b249088138f052ff4847ee4fbab0c72596613a9b77b5",
+    "experiments/e3/report.py": "4e8b0ef22dbcd5f5e7efa2d34fcbe9293649217c45cfaf390959fb073f9bf16a",
+    "experiments/e3/run.py": "b2e16b723460026361ee8640c9defd450cff27a3a5488fe32de6a68e5152e670",
+    "experiments/e3/simulation.py": "20bce8ce5b0b887f67e52d75f50caf53f6706bf716b414f19e8147caabff2649",
+    "requirements-e3.txt": "12592e1fc18a7caa60761008b1f318a9068b4884b8a04868ddddfccbc22d2885",
+    "src/spectral_stability/__init__.py": "50f2b7b89784965ec1bd2be9c21978eabbf6b01e907a03c4c070844708875e4b",
+    "src/spectral_stability/e3_math.py": "47d307b7317147aa8b1c1226f806d648d1342ecf052836317f4f64d47f63418c",
+    "src/spectral_stability/e3_statistics.py": "d4ddeaf44941391c7c484aa2aec95f3acff58bc4d7d8e26c4f27218bd3990d3d",
+    "stability_tests.py": "a467d3d580aedcdf64cba6ff4d38a0573da048c505df7b09a99d4fe0dc2d4c1f",
+    "tests/__init__.py": "0f06371610441d69ddcd3bd46b0ee9beabf438bddbe5584b3fd616dc851e71d5",
+    "tests/test_e3_math.py": "6eac54ce0b2afe1ff449fd4a42cc06c2770223c4d46451faedc51cce11bd68c7",
+    "tests/test_e3_statistics.py": "8e07acbe4403e5597912f29ec4deedebb2b84bda70010bf6e01668bd96755bb8"
+  },
+  "tests_run": 32,
+  "utc": "2026-11-13T14:06:17.895148+00:00"
+}

@@ -1,0 +1,232 @@
+{
+  "analysis_artifact_hashes": {
+    "calibration.csv": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "contrasts.csv": "e6307527441b1f344e69d51450efba0f01ec41b37e6d18600cf1d0ec3777eeec",
+    "figure_index.json": "0b435b3cbdf00f9c4d0a2094deaa7b9b7161e3b0b98d22fa368496790ccdbc49",
+    "figures/oracle_absolute_error.png": "ab20e6da95adfd3661d4e2a73f5105121e758dfd02b68acf3b531f26ddecc3a6",
+    "figures/oracle_absolute_error.svg": "8bbea1d93ac6531ff39d892be893703d32fd7060d975936c337861f71613814e",
+    "figures/oracle_relative_error.png": "f3233dddc44486984c16646f5e60d59af33b0cccca4669383431877ede796721",
+    "figures/oracle_relative_error.svg": "6a9dd4e6802ee9d9320f431f3b02bc9a4c500e2c995e095ad59b1a85a2b9cfc9",
+    "figures/oracle_signed_error.png": "93c625705ef0f330c66fbcdbc33f0a519e6cd8ba2d0912659ce9d3032e282432",
+    "figures/oracle_signed_error.svg": "89d4a0b9e27e7506f481e62d447c5b2882f3164f0d8da8a087f179eac0de06c3",
+    "figures/prediction_spread.png": "766a893b1760e7f17e13d412700fb5bdab8e75eed4733d2dc99ab56c748dab08",
+    "figures/prediction_spread.svg": "4556c8b3f2e019fa234fbee7c283b79118cd7c2cca87eb26a56bba7e17621d3c",
+    "figures/relative_median_absolute_error.png": "80bc7109381f8cff4566612369a553879cf9ae582c32c8bed49a84a934ef9ecd",
+    "figures/relative_median_absolute_error.svg": "d78ae4b12f62a150e30ea16e56b060125f807df9813774e91bdc17afa70d1bef",
+    "figures/relative_underprediction.png": "e6352ab44427ed5d5aeebf9cd7ca9b57c26b4410bcf21147d15a4a10466c2872",
+    "figures/relative_underprediction.svg": "e5e87a068a9f70b8734b53a2c4520f8099114c5bfce15eee3016c5ed8c65121d",
+    "figures/serious_underprediction.png": "a241d3548890a56ed69e424de2670bde70f520112c66e3d7333df6e38b99d397",
+    "figures/serious_underprediction.svg": "fbdef266ac0ce304858f532ab19ddde149e59fda8e396235af559952a3d180ee",
+    "pilot_report.md": "f4a0f8b1d4af1450cad9e814db93479bf07b4fc779c2a6b69e6d2f6bd8337fd3",
+    "ranking.csv": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "summary.csv": "b1f4f5164e7a688895899395af6b119a5b6c54e4427b5d78d65d936a841907c0"
+  },
+  "analysis_complete": true,
+  "conditions": [
+    {
+      "config_id": "c000",
+      "config_index": 0,
+      "delta": 0.05,
+      "n": 50,
+      "t": 0.0
+    },
+    {
+      "config_id": "c001",
+      "config_index": 1,
+      "delta": 0.05,
+      "n": 50,
+      "t": 0.8
+    },
+    {
+      "config_id": "c082",
+      "config_index": 82,
+      "delta": 1.0,
+      "n": 2000,
+      "t": 0.0
+    },
+    {
+      "config_id": "c083",
+      "config_index": 83,
+      "delta": 1.0,
+      "n": 2000,
+      "t": 0.8
+    }
+  ],
+  "config": {
+    "bootstrap_repetitions": 2000,
+    "d": 12,
+    "delta_values": [
+      0.05,
+      0.1,
+      0.2,
+      0.35,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "k": 3,
+    "n_values": [
+      50,
+      100,
+      250,
+      500,
+      1000,
+      2000
+    ],
+    "pilot_replications": 1000,
+    "root_seed": 2026111303,
+    "sampling": "wishart",
+    "seed_namespaces": {
+      "confirmation_reserved": 2,
+      "pilot": 1,
+      "smoke": 0
+    },
+    "smoke_replications": 40,
+    "t_values": [
+      0.0,
+      0.8
+    ]
+  },
+  "environment": {
+    "cpu_count": 3,
+    "executable": "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python",
+    "machine": "x86_64",
+    "numpy_blas": "{'Compilers': {'c': {'name': 'gcc', 'linker': 'ld.bfd', 'version': '14.2.1', 'commands': 'cc'}, 'cython': {'name': 'cython', 'linker': 'cython', 'version': '3.2.1', 'commands': 'cython'}, 'c++': {'name': 'gcc', 'linker': 'ld.bfd', 'version': '14.2.1', 'commands': 'c++'}}, 'Machine Information': {'host': {'cpu': 'x86_64', 'family': 'x86_64', 'endian': 'little', 'system': 'linux'}, 'build': {'cpu': 'x86_64', 'family': 'x86_64', 'endian': 'little', 'system': 'linux'}}, 'Build Dependencies': {'blas': {'name': 'scipy-openblas', 'found': True, 'version': '0.3.30', 'detection method': 'pkgconfig', 'include directory': '/opt/_internal/cpython-3.12.12/lib/python3.12/site-packages/scipy_openblas64/include', 'lib directory': '/opt/_internal/cpython-3.12.12/lib/python3.12/site-packages/scipy_openblas64/lib', 'openblas configuration': 'OpenBLAS 0.3.30  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=64', 'pc file directory': '/project/.openblas'}, 'lapack': {'name': 'scipy-openblas', 'found': True, 'version': '0.3.30', 'detection method': 'pkgconfig', 'include directory': '/opt/_internal/cpython-3.12.12/lib/python3.12/site-packages/scipy_openblas64/include', 'lib directory': '/opt/_internal/cpython-3.12.12/lib/python3.12/site-packages/scipy_openblas64/lib', 'openblas configuration': 'OpenBLAS 0.3.30  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=64', 'pc file directory': '/project/.openblas'}}, 'Python Information': {'path': '/tmp/build-env-aw1mwcap/bin/python', 'version': '3.12'}, 'SIMD Extensions': {'baseline': ['SSE', 'SSE2', 'SSE3'], 'found': ['SSSE3', 'SSE41', 'POPCNT', 'SSE42', 'AVX', 'F16C', 'FMA3', 'AVX2', 'AVX512F', 'AVX512CD', 'AVX512_SKX', 'AVX512_CLX', 'AVX512_CNL', 'AVX512_ICL'], 'not found': ['AVX512_KNL', 'AVX512_KNM', 'AVX512_SPR']}}",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "thread_settings": {
+      "MKL_NUM_THREADS": null,
+      "OMP_NUM_THREADS": null,
+      "OPENBLAS_NUM_THREADS": "1"
+    }
+  },
+  "git_base_commit": "afa3dcbdb54909d82193c4a9d6f78d785d5b62db",
+  "git_status_porcelain": "?? .gitignore\n?? experiments/e3/README.md\n?? experiments/e3/analysis.py\n?? experiments/e3/config.yaml\n?? experiments/e3/design.py\n?? experiments/e3/figures.py\n?? experiments/e3/report.py\n?? experiments/e3/run.py\n?? experiments/e3/simulation.py\n?? requirements-e3.txt\n?? results/e3/\n?? src/spectral_stability/__init__.py\n?? src/spectral_stability/e3_math.py\n?? src/spectral_stability/e3_statistics.py\n?? tests/__init__.py\n?? tests/test_e3_math.py\n?? tests/test_e3_statistics.py\n",
+  "numerical_failures": 0,
+  "protocol_sha256": "9f20696518f7263b77dbf72eeb3b431548f06d31b74d293baa1a8246f35d4edb",
+  "replications_per_configuration": 40,
+  "replications_sha256": "2f3407560b3df34879d335ecdfbdae8b4cbf99ddd77e263a0b52f9ccf0d3cf5d",
+  "run_id": "smoke-e5b01b6e772e-2026111303",
+  "seed_strategy": "PCG64(SeedSequence(root_seed, spawn_key=(stage,config_index,purpose))); independent configurations",
+  "simulation_seconds": 0.037602244000026985,
+  "smoke_checks": {
+    "csv_round_trip_exact": true,
+    "full_pipeline_passed": true,
+    "raw_predictions_above_one_retained": 7,
+    "repeated_seeds_identical": true
+  },
+  "smoke_manifest_sha256": null,
+  "smoke_passed": true,
+  "smoke_path": null,
+  "source_fingerprint": "e5b01b6e772e363418487848636f9861b78bd25724304b911e7164c67c26d1c9",
+  "source_hashes": {
+    "PCA_stability.py": "e68c28a3dda60bef50c61e5218b8aeb70226748ad01fb44899d63cf2d3c50c06",
+    "experiments/e3/E3.md": "9f20696518f7263b77dbf72eeb3b431548f06d31b74d293baa1a8246f35d4edb",
+    "experiments/e3/README.md": "b62eafef4a92fa44a3c40693b534d07c0c18a35f305db2690106639e21d5f046",
+    "experiments/e3/analysis.py": "2b39deb1a71d9042aa26657c3f34a85484977aac2fadd56f0bafeab70a78b7db",
+    "experiments/e3/config.yaml": "5c9c6ba058bf35452637d7bb3d139b810f49365a1e5e013a93fdbeb3f98f2fae",
+    "experiments/e3/design.py": "f7ebf17de2a278ce627b877e0c889437ebcd89d0402b3775f2483ca6ff6c8d11",
+    "experiments/e3/figures.py": "e3038ff1b822c9d228e5b249088138f052ff4847ee4fbab0c72596613a9b77b5",
+    "experiments/e3/report.py": "4e8b0ef22dbcd5f5e7efa2d34fcbe9293649217c45cfaf390959fb073f9bf16a",
+    "experiments/e3/run.py": "b2e16b723460026361ee8640c9defd450cff27a3a5488fe32de6a68e5152e670",
+    "experiments/e3/simulation.py": "20bce8ce5b0b887f67e52d75f50caf53f6706bf716b414f19e8147caabff2649",
+    "requirements-e3.txt": "12592e1fc18a7caa60761008b1f318a9068b4884b8a04868ddddfccbc22d2885",
+    "src/spectral_stability/__init__.py": "50f2b7b89784965ec1bd2be9c21978eabbf6b01e907a03c4c070844708875e4b",
+    "src/spectral_stability/e3_math.py": "47d307b7317147aa8b1c1226f806d648d1342ecf052836317f4f64d47f63418c",
+    "src/spectral_stability/e3_statistics.py": "d4ddeaf44941391c7c484aa2aec95f3acff58bc4d7d8e26c4f27218bd3990d3d",
+    "stability_tests.py": "a467d3d580aedcdf64cba6ff4d38a0573da048c505df7b09a99d4fe0dc2d4c1f",
+    "tests/__init__.py": "0f06371610441d69ddcd3bd46b0ee9beabf438bddbe5584b3fd616dc851e71d5",
+    "tests/test_e3_math.py": "6eac54ce0b2afe1ff449fd4a42cc06c2770223c4d46451faedc51cce11bd68c7",
+    "tests/test_e3_statistics.py": "8e07acbe4403e5597912f29ec4deedebb2b84bda70010bf6e01668bd96755bb8"
+  },
+  "stage": "smoke",
+  "streams": {
+    "c000": {
+      "calibration_if_first_in_stratum": [
+        0,
+        0,
+        2
+      ],
+      "joint_bootstrap": [
+        0,
+        0,
+        1
+      ],
+      "simulation": [
+        0,
+        0,
+        0
+      ]
+    },
+    "c001": {
+      "calibration_if_first_in_stratum": [
+        0,
+        1,
+        2
+      ],
+      "joint_bootstrap": [
+        0,
+        1,
+        1
+      ],
+      "simulation": [
+        0,
+        1,
+        0
+      ]
+    },
+    "c082": {
+      "calibration_if_first_in_stratum": [
+        0,
+        82,
+        2
+      ],
+      "joint_bootstrap": [
+        0,
+        82,
+        1
+      ],
+      "simulation": [
+        0,
+        82,
+        0
+      ]
+    },
+    "c083": {
+      "calibration_if_first_in_stratum": [
+        0,
+        83,
+        2
+      ],
+      "joint_bootstrap": [
+        0,
+        83,
+        1
+      ],
+      "simulation": [
+        0,
+        83,
+        0
+      ]
+    }
+  },
+  "total_replications": 160,
+  "utc": "2026-11-13T14:06:19.125958+00:00",
+  "validation_json_sha256": "b343cb8d03cec9dedb8888d8a7cc162fedf02546e0d8d2f6f57ac4a164d1b167",
+  "validation_path": "results/e3/validation.json",
+  "verification": {
+    "configurations": 4,
+    "maximum_count": 40,
+    "maximum_decomposition_residual": 6.661338147750939e-16,
+    "minimum_count": 40,
+    "numerical_failures": 0,
+    "replications": 160
+  },
+  "versions": {
+    "matplotlib": "3.10.8",
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "python": "3.12.14 (main, Aug 25 2026, 14:00:49) [Clang 22.1.3 ]",
+    "pyyaml": "6.0.3",
+    "scipy": "1.17.0"
+  }
+}
