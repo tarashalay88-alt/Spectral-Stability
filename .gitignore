@@ -2,3 +2,8 @@ __pycache__/
 *.pyc
 .venv/
 .mplconfig/
+
+# E3 auxiliary visual/text output: generated locally but not stored on main.
+results/e3/*/figures/*.svg
+results/e3/*/pilot_report.md
+results/e3/*/postflight_report.md
