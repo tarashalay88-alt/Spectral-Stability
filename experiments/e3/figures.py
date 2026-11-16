@@ -10,6 +10,18 @@ from matplotlib.colors import LogNorm
 import numpy as np
 
 
+def serious_underprediction_color_limits(summary):
+    """Scale only on eligible cells, never on masked/ineligible probabilities."""
+    eligible = summary.loc[
+        summary['serious_eligibility'] == 'established', 'serious_underprediction'
+    ].to_numpy(dtype=float)
+    eligible = eligible[np.isfinite(eligible)]
+    if not len(eligible):
+        return 0.0, 1.0
+    # Round up to a readable tenth; exclude values that will not be plotted.
+    return 0.0, max(0.1, np.ceil(float(eligible.max()) * 10) / 10)
+
+
 def make_figures(summary, output, run_id):
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
@@ -20,7 +32,7 @@ def make_figures(summary, output, run_id):
         ('oracle_absolute_error', 'Oracle absolute error |B − R̂|', True),
         ('oracle_relative_error', 'Oracle relative error |B − R̂| / R̂', True),
         ('relative_median_absolute_error', 'Median raw plug-in absolute error / R̂', True),
-        ('serious_underprediction', 'Serious underprediction P(B̂ ≤ 0.05); risk CI above 0.10', False),
+        ('serious_underprediction', r'Serious underprediction $P(\\widehat{B}\\leq 0.05)$; risk CI above 0.10', False),
         ('relative_underprediction', 'Relative underprediction P(B̂ < 0.5 R̂)', False),
     ]
     for metric, title, logarithmic in maps:
@@ -35,6 +47,11 @@ def make_figures(summary, output, run_id):
         if metric == 'oracle_signed_error':
             bound = max(abs(observed.min()), abs(observed.max()))
             kwargs = dict(vmin=-bound, vmax=bound)
+        if metric == 'serious_underprediction':
+            # Masked cells can have probabilities close to 1.0; they MUST NOT
+            # determine the displayed color range for eligible cells.
+            lower, upper = serious_underprediction_color_limits(summary)
+            kwargs = dict(vmin=lower, vmax=upper)
         for ax, t in zip(axes, (0., .8)):
             subset = summary[summary.t == t]
             cells = np.full((len(deltas), len(ns)), np.nan)
@@ -46,12 +63,20 @@ def make_figures(summary, output, run_id):
                     ax.text(j,i,'?' if row['serious_eligibility']=='uncertain' else '—',
                             ha='center',va='center',fontsize=8)
             im = ax.imshow(np.ma.masked_invalid(cells), origin='lower', aspect='auto',
-                           cmap='coolwarm' if metric == 'oracle_signed_error' else 'viridis', **kwargs)
+                           cmap=('coolwarm' if metric == 'oracle_signed_error' else
+                                 plt.get_cmap('viridis').copy().with_extremes(bad='#f1f1f1')),
+                           **kwargs)
             ax.set(xticks=range(len(ns)), xticklabels=ns, yticks=range(len(deltas)),
                    yticklabels=[f'{d:.2f}' for d in deltas], xlabel='Sample size n',
                    ylabel='Population boundary eigengap δ', title=f'Background t={t:g}')
-        fig.colorbar(im, ax=axes, shrink=.85, label='Log color scale' if logarithmic else 'Value')
-        fig.suptitle(title+'\n'+footer, fontsize=10)
+        cb_label = ('Probability (eligible configurations only)'
+                    if metric == 'serious_underprediction'
+                    else 'Log color scale' if logarithmic else 'Value')
+        fig.colorbar(im, ax=axes, shrink=.85, label=cb_label)
+        note = ('\nEligibility: lower 95% CI for R > 0.10; '
+                '— = below threshold, ? = uncertain'
+                if metric == 'serious_underprediction' else '')
+        fig.suptitle(title+'\n'+footer+note, fontsize=10)
         fig.savefig(output/f'{metric}.png',dpi=160)
         plt.close(fig)
     fig, axes = plt.subplots(len(ns), 2, figsize=(11, 2.6*len(ns)), squeeze=False,
