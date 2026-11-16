@@ -32,7 +32,7 @@ def make_figures(summary, output, run_id):
         ('oracle_absolute_error', 'Oracle absolute error |B − R̂|', True),
         ('oracle_relative_error', 'Oracle relative error |B − R̂| / R̂', True),
         ('relative_median_absolute_error', 'Median raw plug-in absolute error / R̂', True),
-        ('serious_underprediction', r'Serious underprediction $P(\\widehat{B}\\leq 0.05)$; risk CI above 0.10', False),
+        ('serious_underprediction', r'Serious underprediction $P(\widehat{B}\leq 0.05)$; risk CI above 0.10', False),
         ('relative_underprediction', 'Relative underprediction P(B̂ < 0.5 R̂)', False),
     ]
     for metric, title, logarithmic in maps:
