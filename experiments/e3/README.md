@@ -13,6 +13,14 @@ The frozen scientific plan is [E3.md](E3.md). This directory contains the experi
 
 Reusable algorithms are in [src/spectral_stability](../../src/spectral_stability/), with tests in [tests](../../tests/). Saved evidence is in [results/e3](../../results/e3/).
 
+## Current serious-underprediction figure
+
+The **publication/presentation figure** is the corrected [serious-underprediction SVG](../../results/e3/presentation/serious_underprediction.svg):
+
+![Corrected E3 serious-underprediction heatmap](../../results/e3/presentation/serious_underprediction.svg)
+
+The file `results/e3/pilot/figures/serious_underprediction.png` is the **original archived pilot image**, intentionally unchanged for hash verification. It is not the presentation figure. Eligible cells show percentages; grey hatching means risk confidently below 0.10, and yellow `?` means uncertain eligibility. Full confidence intervals remain in `results/e3/pilot/summary.csv`.
+
 ## Check the original pilot
 
 From the repository root, with Python 3.12 and `requirements-e3.txt` installed:
