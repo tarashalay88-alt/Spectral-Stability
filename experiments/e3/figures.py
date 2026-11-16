@@ -71,6 +71,255 @@ def _save(fig, output, name, footer, note, show):
         plt.close(fig)
 
 
+
+def _plot_serious_underprediction(summary, output, footer, show, ns, deltas, ts):
+    """Readable, eligibility-gated frequency map; original estimates unchanged."""
+    from matplotlib.patches import Rectangle, Patch
+    from matplotlib.ticker import PercentFormatter
+
+    low, high = serious_underprediction_color_limits(summary)
+    cmap = plt.get_cmap('viridis')
+    norm = plt.Normalize(low, high)
+    fig, axes = plt.subplots(1, len(ts), figsize=(14.2, 6.7), squeeze=False)
+    fig.subplots_adjust(left=.085, right=.84, bottom=.275, top=.80, wspace=.25)
+
+    for panel, t in zip(axes[0], ts):
+        cells = np.full((len(deltas), len(ns)), np.nan)
+        group = summary[summary.t == t]
+        records = group.to_dict('records')
+        for record in records:
+            if record['serious_eligibility'] == 'established':
+                i, j = deltas.index(record['delta']), ns.index(record['n'])
+                cells[i, j] = record['serious_underprediction']
+
+        image = panel.imshow(np.ma.masked_invalid(cells), origin='lower',
+                             aspect='auto', cmap=cmap, norm=norm)
+
+        for record in records:
+            i, j = deltas.index(record['delta']), ns.index(record['n'])
+            status = record['serious_eligibility']
+            if status == 'established':
+                value = record['serious_underprediction']
+                rgba = cmap(norm(value))
+                luminance = .2126*rgba[0] + .7152*rgba[1] + .0722*rgba[2]
+                panel.text(j, i, f'{100*value:.1f}%', ha='center', va='center',
+                           fontsize=9, fontweight='medium',
+                           color='black' if luminance > .52 else 'white')
+            else:
+                if status == 'below_threshold':
+                    panel.add_patch(Rectangle((j-.5, i-.5), 1, 1,
+                                    facecolor='#eef0f2', hatch='///',
+                                    edgecolor='#c9cdd2', linewidth=.5))
+                else:
+                    panel.add_patch(Rectangle((j-.5, i-.5), 1, 1,
+                                    facecolor='#fff0bd', edgecolor='#d5b765',
+                                    linewidth=.6))
+                    panel.text(j, i, '?', ha='center', va='center',
+                               fontsize=12, fontweight='bold', color='#74571a')
+
+        panel.set(xticks=range(len(ns)), xticklabels=ns,
+                  yticks=range(len(deltas)),
+                  yticklabels=[f'{value:.2f}' for value in deltas],
+                  xlabel='Sample size n', title=f'Background t={t:g}')
+        if panel is axes[0, 0]:
+            panel.set_ylabel('Population boundary eigengap δ')
+        panel.tick_params(length=0, labelsize=10)
+        panel.set_xticks(np.arange(-.5, len(ns), 1), minor=True)
+        panel.set_yticks(np.arange(-.5, len(deltas), 1), minor=True)
+        panel.grid(which='minor', color='white', linewidth=1)
+        panel.tick_params(which='minor', length=0)
+
+    color_axis = fig.add_axes([.865, .285, .019, .485])
+    bar = fig.colorbar(image, cax=color_axis)
+    bar.set_ticks(np.linspace(low, high, 6))
+    bar.ax.yaxis.set_major_formatter(PercentFormatter(xmax=1, decimals=0))
+    bar.set_label('Estimated frequency (eligible configurations)', labelpad=12)
+
+    legend_handles = [
+        Patch(facecolor='#eef0f2', edgecolor='#c9cdd2', hatch='///',
+              label='Excluded: risk confidently below 0.10'),
+        Patch(facecolor='#fff0bd', edgecolor='#d5b765',
+              label='Uncertain: risk interval crosses 0.10'),
+    ]
+    fig.legend(handles=legend_handles, loc='lower center',
+               bbox_to_anchor=(.49, .185), ncol=2, frameon=False, fontsize=10)
+    fig.suptitle('Serious underprediction of principal-subspace risk',
+                 y=.965, fontsize=16)
+    fig.text(.5, .875,
+             r'Event: $\widehat B\leq0.05$  |  Eligible only if lower 95% MC risk bound $>0.10summary, output, name, title, footer, show, ns, deltas, ts):
+    if name == 'serious_underprediction':
+        return _plot_serious_underprediction(summary, output, footer, show, ns, deltas, ts)
+    sign = name == 'oracle_signed_error_sign'
+    source = 'oracle_signed_error' if sign else name
+    observed = summary[source].to_numpy(float)
+    finite = observed[np.isfinite(observed)]
+    positive = finite[finite>0]
+    cmap = plt.get_cmap('viridis').with_extremes(bad='#eeeeee')
+    norm = None
+    cb_label = title.split('$')[0].strip()
+    note = 'Discrete tested grid; equal cell spacing is categorical.'
+    if sign:
+        cmap = ListedColormap(['#2166ac','#eeeeee','#b2182b'])
+        norm = BoundaryNorm([-1.5,-.5,.5,1.5],3)
+        note += '\nGrey: sign unresolved by pointwise 95% Monte Carlo risk CI; not evidence of zero error.'
+    elif name == 'oracle_signed_error':
+        bound = max(float(np.max(abs(finite))), 1e-12)
+        # Resolve small errors while retaining all extremes; report the scale.
+        threshold = max(float(np.median(summary.risk_mcse)), 1e-8) if 'risk_mcse' in summary else 1e-4
+        norm = SymLogNorm(linthresh=threshold, vmin=-bound, vmax=bound, base=10)
+        cmap = plt.get_cmap('coolwarm').with_extremes(bad='#eeeeee')
+        cb_label = f'Signed error (symmetric log; linear within ±{threshold:.2g})'
+        note += '\nColours show point estimates; use the sign map for uncertainty.'
+    elif name in ('oracle_absolute_error','oracle_relative_error','relative_median_absolute_error'):
+        if not len(positive):
+            norm = plt.Normalize(0,1)
+        else:
+            norm = LogNorm(positive.min(), max(positive.max(),positive.min()*1.01))
+        cb_label = 'Error (logarithmic colour scale)'
+        note += '\nHatcing: pointwise 95% interval includes B (oracle maps) or the 20% relative-error reference (plug-in map).'
+        note = note.replace('Hatcing','Hatching')
+    else:
+        upper = serious_underprediction_color_limits(summary)[1] if name == 'serious_underprediction' else 1.
+        norm = plt.Normalize(0,upper)
+        cb_label = 'Estimated probability' + (' (eligible configurations)' if name == 'serious_underprediction' else '')
+        if name == 'serious_underprediction':
+            note += '\nEligibility: lower 95% risk CI > 0.10; —: upper CI < 0.10; ?: unresolved. Coloured cells are eligible only.'
+    fig, axes = plt.subplots(1,len(ts),figsize=(12,5.6),squeeze=False)
+    fig.subplots_adjust(left=.075,right=.88,bottom=.25,top=.83,wspace=.25)
+    for ax,t in zip(axes[0],ts):
+        cells = np.full((len(deltas),len(ns)),np.nan)
+        group = summary[summary.t == t].copy()
+        group['_sign'] = oracle_sign_classes(group)
+        for row in group.to_dict('records'):
+            i,j = deltas.index(row['delta']),ns.index(row['n'])
+            eligible = name != 'serious_underprediction' or row['serious_eligibility']=='established'
+            if not eligible:
+                ax.text(j,i,'?' if row['serious_eligibility']=='uncertain' else '—',ha='center',va='center')
+                continue
+            cells[i,j] = row['_sign'] if sign else row[source]
+            hatch = (name in ('oracle_absolute_error','oracle_relative_error') and row['risk_low'] <= row['oracle'] <= row['risk_high'])
+            hatch |= (name == 'relative_median_absolute_error' and row[source+'_low'] <= .20 <= row[source+'_high'])
+            if hatch:
+                from matplotlib.patches import Rectangle
+                ax.add_patch(Rectangle((j-.5,i-.5),1,1,fill=False,hatch='///',edgecolor='#666666',linewidth=0,zorder=3))
+            if not sign and (name.endswith('underprediction') or name=='relative_median_absolute_error'):
+                value = row[source]
+                text = f'{value:.3f}\n[{row[source+"_low"]:.3f}, {row[source+"_high"]:.3f}]'
+                rgba = cmap(norm(value)); luminance = .2126*rgba[0]+.7152*rgba[1]+.0722*rgba[2]
+                ax.text(j,i,text,ha='center',va='center',fontsize=6.6,color='black' if luminance>.52 else 'white',zorder=4)
+        im = ax.imshow(np.ma.masked_invalid(cells),origin='lower',aspect='auto',cmap=cmap,norm=norm)
+        ax.set(xticks=range(len(ns)),xticklabels=ns,yticks=range(len(deltas)),yticklabels=[f'{d:.2f}' for d in deltas],xlabel='Sample size n',ylabel='Population boundary eigengap δ',title=f'Background t={t:g}')
+    cb = fig.colorbar(im,cax=fig.add_axes([.905,.27,.016,.52]),label=cb_label)
+    if sign:
+        cb.set_ticks([-1,0,1],labels=['Negative','Unresolved','Positive'])
+        cb.set_label('Sign supported by pointwise 95% risk CI')
+    if name.endswith('underprediction') or name == 'relative_median_absolute_error':
+        note += '\nCell annotations: estimate [pointwise 95% CI]; intervals are not simultaneous.'
+    fig.suptitle(title,fontsize=15,y=.96)
+    _save(fig,output,name,footer,note,show)
+
+
+def _plot_spread(summary, ns, footer, path, show=False):
+    ts = sorted(summary.t.unique())
+    fig,axes = plt.subplots(len(ns),len(ts),figsize=(12,3*len(ns)+1.3),squeeze=False)
+    fig.subplots_adjust(left=.08,right=.98,bottom=.12 if len(ns)>3 else .18,top=.88 if len(ns)<=3 else .94,hspace=.55,wspace=.25)
+    for i,n in enumerate(ns):
+        for j,t in enumerate(ts):
+            ax=axes[i,j]
+            sub=summary[(summary.n==n)&(summary.t==t)].sort_values('delta')
+            x=sub.delta.to_numpy()
+            ax.fill_between(x,sub.raw_q05,sub.raw_q95,color='#4393c3',alpha=.22,label='Sample distribution: 5–95%')
+            ax.fill_between(x,sub.raw_q25,sub.raw_q75,color='#f4a259',alpha=.5,label='Sample distribution: 25–75%')
+            ax.plot(x,sub.raw_q50,'o-',color='#2166ac',label='Raw median')
+            ax.errorbar(x,sub.raw_q99,yerr=np.array([sub.raw_q99-sub.raw_q99_low,sub.raw_q99_high-sub.raw_q99]),fmt='x:',color='#e87817',capsize=2,label='Raw 99th percentile + 95% CI')
+            ax.errorbar(x,sub.risk,yerr=np.array([sub.risk-sub.risk_low,sub.risk_high-sub.risk]),fmt='s--',color='black',capsize=3,label=r'Risk $\widehat R$ + 95% MC CI')
+            ax.set(yscale='log',xlabel='Population boundary eigengap δ',ylabel=r'Raw $\widehat B$ or risk $\widehat R$',title=f'n={n}, t={t:g}')
+            ax.grid(alpha=.2)
+        # Shared scale within each n: direct comparison between backgrounds.
+        bounds=[ax.get_ylim() for ax in axes[i]]
+        for ax in axes[i]: ax.set_ylim(min(v[0] for v in bounds),max(v[1] for v in bounds))
+    handles,labels=axes[0,0].get_legend_handles_labels()
+    fig.legend(handles,labels,loc='upper center',bbox_to_anchor=(.5,.968 if len(ns)>3 else .955),ncol=3,fontsize=8,frameon=False)
+    fig.suptitle('Raw plug-in prediction spread (log scale)',y=.995,fontsize=16)
+    _save(fig,Path(path).parent,Path(path).stem,footer,
+          'Shading: variation across samples, not confidence bands. Error bars: pointwise Monte Carlo uncertainty.\nY limits shared across backgrounds within each row; may differ between sample sizes.',show)
+
+
+def make_figures(summary, output, run_id=None, show=False, metadata=None):
+    _validate(summary)
+    output=Path(output);output.mkdir(parents=True,exist_ok=True)
+    metadata=metadata or {}
+    candidate=output.parent/'run_manifest.json'
+    if not metadata and candidate.is_file():
+        metadata=json.loads(candidate.read_text(encoding='utf-8'))
+        metadata['_manifest_path']=str(candidate.resolve())
+    config=metadata.get('config',{})
+    identity=metadata.get('run_id',run_id) or 'unverified run identity'
+    dims=', '.join(f'{key}={config[key]}' for key in ('d','k') if key in config)
+    m = ', '.join(map(str,sorted(summary.M.unique()))) if 'M' in summary else 'unknown'
+    footer=f'Exploratory E3 · {identity}'+(f' · {dims}' if dims else '')+f' · M={m} per cell'
+    manifest_path=metadata.get('_manifest_path')
+    reference=os.path.relpath(manifest_path,output.resolve()) if manifest_path else 'run manifest not supplied'
+    footer+='\nSimulation parameters, seeds and software: '+reference
+    maps=[('oracle_signed_error',r'Oracle signed error $B-\widehat R$'),
+          ('oracle_signed_error_sign',r'Oracle error sign with Monte Carlo uncertainty'),
+          ('oracle_absolute_error',r'Oracle absolute error $|B-\widehat R|$'),
+          ('oracle_relative_error',r'Oracle relative error $|B-\widehat R|/\widehat R$'),
+          ('relative_median_absolute_error',r'Median raw plug-in absolute error / $\widehat R$'),
+          ('serious_underprediction',r'Serious underprediction $P(\widehat B\leq0.05)$, eligible risks only'),
+          ('relative_underprediction',r'Relative underprediction $P(\widehat B<0.5 R)$ (estimated using $\widehat R$)')]
+    ns=sorted(summary.n.unique());deltas=sorted(summary.delta.unique());ts=sorted(summary.t.unique())
+    for name,title in maps: _heatmap(summary,output,name,title,footer,show,ns,deltas,ts)
+    main=[n for n in (100,500,2000) if n in ns]
+    _plot_spread(summary,main or ns,footer,output/'prediction_spread.png',show)
+    _plot_spread(summary,ns,footer,output/'prediction_spread_supplement.png',show)
+
+
+
+if __name__ == '__main__':
+    import argparse
+    import pandas as pd
+    parser=argparse.ArgumentParser(description=__doc__)
+    script=Path(__file__).resolve()
+    default_run=next((p/'results/e3/pilot' for p in script.parents if (p/'results/e3/pilot/summary.csv').is_file()),None)
+    # Bundled results are convenient when running the downloaded ZIP.
+    if (script.parent/'summary.csv').is_file(): default_run=script.parent
+    parser.add_argument('--run-dir',type=Path,default=default_run)
+    parser.add_argument('--output',type=Path,default=script.parent)
+    parser.add_argument('--no-show',action='store_true')
+    args=parser.parse_args()
+    if args.run_dir is None:
+        from tkinter import Tk,filedialog
+        root=Tk();root.withdraw()
+        try: selected=filedialog.askopenfilename(title='Select saved E3 summary.csv',filetypes=[('CSV files','*.csv')])
+        finally: root.destroy()
+        if not selected: parser.exit(message='No summary file selected.\n')
+        summary_path=Path(selected)
+    else: summary_path=args.run_dir.resolve()/'summary.csv'
+    summary=pd.read_csv(summary_path,float_precision='round_trip')
+    manifest=summary_path.parent/'run_manifest.json'
+    metadata=json.loads(manifest.read_text(encoding='utf-8')) if manifest.is_file() else {}
+    digest=hashlib.sha256(summary_path.read_bytes()).hexdigest()
+    expected=metadata.get('analysis_artifact_hashes',{}).get('summary.csv')
+    if expected and digest!=expected:
+        raise ValueError('summary.csv hash differs from its run manifest; choose the matching files')
+    if not manifest.is_file(): warnings.warn('No run_manifest.json found; run identity and dimensions are unavailable')
+    metadata['_manifest_path']=str(manifest.resolve()) if manifest.is_file() else None
+    metadata['_source']={'summary_file':summary_path.name,'summary_sha256':digest,
+                         'manifest_file':manifest.name if manifest.is_file() else None,
+                         'manifest_sha256':hashlib.sha256(manifest.read_bytes()).hexdigest() if manifest.is_file() else None,
+                         'summary_hash_matches_manifest':digest==expected if expected else None}
+    make_figures(summary,args.output,show=not args.no_show,metadata=metadata)
+    print(f'Figures saved beside figures.py: {args.output.resolve()}')
+    if not args.no_show: plt.show()
+,
+             ha='center', fontsize=11)
+
+    note = ('Numbers: estimated event frequencies. Pointwise 95% Wilson intervals '
+            'are retained in summary.csv, not printed in each cell.')
+    _save(fig, output, 'serious_underprediction', footer, note, show)
+
+
 def _heatmap(summary, output, name, title, footer, show, ns, deltas, ts):
     sign = name == 'oracle_signed_error_sign'
     source = 'oracle_signed_error' if sign else name
