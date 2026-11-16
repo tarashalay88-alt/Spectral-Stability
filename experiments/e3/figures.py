@@ -78,6 +78,8 @@ def make_figures(summary, output, run_id):
                 if metric == 'serious_underprediction' else '')
         fig.suptitle(title+'\n'+footer+note, fontsize=10)
         fig.savefig(output/f'{metric}.png',dpi=160)
+        if metric == 'serious_underprediction':
+            fig.savefig(output/f'{metric}.svg')
         plt.close(fig)
     fig, axes = plt.subplots(len(ns), 2, figsize=(11, 2.6*len(ns)), squeeze=False,
                              layout='constrained')
