@@ -19,3 +19,9 @@ The historical pilot manifest lists optional SVG images and automatically genera
 To verify the *currently retained* evidence without generating files, run `python experiments/e3/run.py verify` from the repository root. It independently recalculates the main numerical summaries and checks original hashes; it does not claim to rerun the historical environment.
 
 See the [frozen protocol](../../experiments/e3/E3.md) and [implementation guide](../../experiments/e3/README.md).
+
+## Corrected serious-underprediction visualization
+
+**Use [the corrected presentation heatmap](presentation/serious_underprediction.svg) in the research report.** Its color scale spans 0–50%, calculated from the 42 *eligible* pilot configurations only (maximum observed eligible rate: 44.5%). The 39 ineligible cells use an em dash; 3 cells with uncertain eligibility use a question mark. The figure includes a legend and numeric percentages.
+
+This is a **presentation-only redraw of the original `pilot/summary.csv`**. No simulation values, eligibility rules, or statistical summaries changed. The original `pilot/figures/serious_underprediction.png` remains untouched because its SHA-256 is part of the immutable pilot manifest checked by `python experiments/e3/run.py verify`. New runs use the corrected plotting logic in `experiments/e3/figures.py` and save both PNG and SVG versions.
