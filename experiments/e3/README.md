@@ -38,3 +38,9 @@ The commands refuse existing output directories. Both run tests first; `pilot` a
 Use `python experiments/e3/run.py analyze --output PATH` to regenerate results **only for a newly created run with the current numerical source fingerprints**. The archived pilot is intentionally read-only.
 
 The independent 5,000-replication confirmatory stage has not been implemented or run. The old run's source and software identifiers remain in its original manifest and Git history; they are historical provenance, not hashes of today's cleaned code.
+
+## Serious-underprediction figure correction
+
+The current plotting code derives the colorbar maximum **only from configurations eligible for the serious-underprediction test**, not from excluded cells whose unplotted probability may be close to 1.0. It explicitly distinguishes below-threshold cells (`—`) from uncertain eligibility (`?`), labels the colorbar, and writes a vector SVG as well as PNG for **new** runs. Regression tests for scale selection are in `tests/test_e3_figures.py`.
+
+For the completed pilot, use the [corrected presentation SVG](../../results/e3/presentation/serious_underprediction.svg). The original archived pilot PNG and manifest hashes deliberately remain unchanged; `verify` continues to audit them as historical evidence.
